@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"grpc-rest/core"
+	"net/http"
 )
 
 type Repository struct {
@@ -20,20 +21,33 @@ func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 	for rows.Next() {
 		var student Student
 
+		var created, updated sql.NullTime
 		err := rows.Scan(
 			&student.Id,
 			&student.FirstName,
 			&student.LastName,
 			&student.Identifier,
-			&student.CreatedAt,
-			&student.UpdatedAt,
+			&created,
+			&updated,
 		)
+
+		if created.Valid {
+			student.CreatedAt = &created.Time
+		}
+		if updated.Valid {
+			student.UpdatedAt = &updated.Time
+		}
 
 		if err != nil {
 			return nil, core.NewError(nil, err, 0)
 		}
+
+		students = append(students, student)
+	}
+
+	if len(students) == 0 {
+		return nil, core.NewError(nil, "Students not found", http.StatusNotFound)
 	}
 
 	return students, err
 }
-

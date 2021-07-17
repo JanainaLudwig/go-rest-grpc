@@ -19,7 +19,7 @@ type Config struct {
 }
 
 func NewConnectionPool(config *Config) *sql.DB {
-	db, err := sql.Open("mysql", config.User+":"+config.Password+"@tcp("+config.Host+":"+config.Port+")/"+config.Database)
+	db, err := sql.Open("mysql", config.User+":"+config.Password+"@tcp("+config.Host+":"+config.Port+")/"+config.Database+"?parseTime=true")
 	if err != nil {
 		log.Println("Error opening db connection", err)
 		return nil

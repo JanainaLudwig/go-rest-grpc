@@ -11,8 +11,8 @@ type Student struct {
 	FirstName  string    `json:"first_name"`
 	LastName   string    `json:"last_name"`
 	Identifier string    `json:"identifier"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	CreatedAt  *time.Time `json:"created_at"`
+	UpdatedAt  *time.Time `json:"updated_at"`
 }
 
 func FetchAll(ctx context.Context) ([]Student, error) {
