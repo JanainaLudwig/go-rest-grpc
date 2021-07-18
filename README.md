@@ -45,58 +45,8 @@ cd grpc
 protoc --go_out=plugins=grpc:. *.proto
 ````
 
-
-````go
-var defaultRequestTimeout = time.Second * 10
-type grpcService struct {
-  grpcClient mysvcgrpc.UserServiceClient
-}
-
-func NewGRPCService(connString string) (mysvc.Service, error) {
-  conn, err := grpc.Dial(connString, grpc.WithInsecure())
-  if err != nil {
-    return nil, err
-  }
-  return &grpcService{grpcClient: mysvcgrpc.NewUserServiceClient(conn)}, nil
-}
-func (s *grpcService) GetUsers(ids []int64) (result map[int64]mysvc.User, err error) {
-  result = map[int64]mysvc.User{}
-  req := &mysvcgrpc.GetUsersRequest{
-    Ids: ids,
-  }
-  ctx, cancelFunc := context.WithTimeout(context.Background(), defaultRequestTimeout)
-  defer cancelFunc()
-  resp, err := s.grpcClient.GetUsers(ctx, req)
-  if err != nil {
-    return
-  }
-  for _, grpcUser := range resp.GetUsers() {
-    u := unmarshalUser(grpcUser)
-    result[u.ID] = u
-  }
-  return
-}
-func (s *grpcService) GetUser(id int64) (result mysvc.User, err error) {
-  req := &mysvcgrpc.GetUsersRequest{
-    Ids: []int64{id},
-  }
-  ctx, cancelFunc := context.WithTimeout(context.Background(), defaultRequestTimeout)
-  defer cancelFunc()
-  resp, err := s.grpcClient.GetUsers(ctx, req)
-  if err != nil {
-    return
-  }
-  for _, grpcUser := range resp.GetUsers() {
-    // sanity check: only the requested user should be present in results
-    if grpcUser.GetId() == id {
-      return unmarshalUser(grpcUser), nil
-    }
-  }
-  return result, mysvc.ErrNotFound
-}
-func unmarshalUser(grpcUser *mysvcgrpc.User) (result mysvc.User) {
-  result.ID = grpcUser.Id
-  result.Name = grpcUser.Name
-  return
-}
-````
+## Poc Result
+### Payload size
+With 1000 registers in students database:
+Rest: 149,000kB
+GRPC:  45,916kB
