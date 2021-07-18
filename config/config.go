@@ -13,6 +13,7 @@ type AppConfig struct {
 	AppEnv string
 	Debug bool
 	ApiPort string
+	GrpcPort string
 	DbConfig *database.Config
 }
 
@@ -21,6 +22,7 @@ func LoadEnv(path string) {
 
 	App.AppEnv = loadString("APP_ENV", envStr("development"))
 	App.ApiPort = loadString("API_PORT", envStr("8080"))
+	App.GrpcPort = loadString("GRPC_PORT", envStr("9000"))
 	App.Debug = App.AppEnv == "development"
 
 	App.DbConfig = &database.Config{

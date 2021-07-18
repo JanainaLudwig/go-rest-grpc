@@ -1,0 +1,26 @@
+syntax="proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package grpc;
+option go_package = "./proto";
+
+service StudentsService {
+  rpc GetStudents (GetStudentsRequest) returns (GetStudentsResponse) {}
+}
+
+message Student {
+  int64 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string identifier = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message GetStudentsRequest {
+}
+
+message GetStudentsResponse {
+  repeated Student students = 1;
+}
