@@ -31,8 +31,8 @@ func LoadEnv(path string) {
 		Database:     loadString("MYSQL_DATABASE", nil),
 		Port:         loadString("MYSQL_PORT", nil),
 		Password:     loadString("MYSQL_PASSWORD", nil),
-		MaxOpenConns: 20,
-		MaxIdleConns: 20,
+		MaxOpenConns: 100,
+		MaxIdleConns: 100,
 		MaxLifetime:  4 * time.Minute,
 	}
 }

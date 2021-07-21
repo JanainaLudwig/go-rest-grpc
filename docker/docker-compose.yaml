@@ -12,6 +12,22 @@ services:
     depends_on:
       - "mysql"
       - "redis"
+    environment:
+      - MYSQL_HOST=mysql_api
+  grpc-server:
+      build:
+        dockerfile: ./docker/grpc/Dockerfile
+        context: ../
+      container_name: grpc-server
+      ports:
+        - "9000:9000"
+      networks:
+        - prod
+      depends_on:
+        - "mysql"
+        - "redis"
+      environment:
+        - MYSQL_HOST=mysql_api
 
   redis:
     image: redis
