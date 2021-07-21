@@ -1,4 +1,4 @@
-# Go Api Template
+# Go Rest / Grpc comparison
 
 ## How to run
 Create a **/config/.env** file. There is an example available inside the config folder.
