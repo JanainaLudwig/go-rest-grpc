@@ -23,7 +23,8 @@ func LoadEnv(path string) {
 	App.AppEnv = loadString("APP_ENV", envStr("development"))
 	App.ApiPort = loadString("API_PORT", envStr("8080"))
 	App.GrpcPort = loadString("GRPC_PORT", envStr("9000"))
-	App.Debug = App.AppEnv == "development"
+	//App.Debug = App.AppEnv == "development"
+	App.Debug = false
 
 	App.DbConfig = &database.Config{
 		Host:         loadString("MYSQL_HOST", nil),

@@ -81,7 +81,7 @@ func (r *Repository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affected == 0 {
-		return core.NewError(id, "Student not found", http.StatusBadRequest)
+		return core.NewError(id, "Student not found", http.StatusNotFound)
 	}
 
 	return nil
