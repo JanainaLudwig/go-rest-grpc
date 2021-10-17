@@ -43,7 +43,10 @@ services:
     container_name: mysql
     hostname: mysql_api
     ports:
-      - 3306:3306
+      - "3306:3306"
+    command: --max_allowed_packet=32505856 --init-file /data/application/init.sql
+    volumes:
+      - ./init.sql:/data/application/init.sql
     environment:
       - MYSQL_USER=go_api
       - MYSQL_PASSWORD=password

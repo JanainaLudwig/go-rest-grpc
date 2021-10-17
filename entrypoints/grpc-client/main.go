@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"google.golang.org/grpc"
-	proto2 "google.golang.org/protobuf/proto"
 	"grpc-rest/config"
 	"grpc-rest/core"
 	"grpc-rest/grpc/proto"
@@ -28,7 +27,7 @@ func main() {
 		return
 	}
 
-	log.Println(proto2.Size(students), "bytes")
-	//log.Println(students.GetStudents())
+	//log.Println(proto2.Size(students), "bytes")
+	log.Println(students.GetStudents())
 }
 

@@ -26,6 +26,9 @@ func loadString(code string, defaultValue *string) string {
 	val := os.Getenv(code)
 
 	if val == "" {
+		if defaultValue == nil {
+			log.Fatal("ENV value not found for ", code)
+		}
 		return *defaultValue
 	}
 
