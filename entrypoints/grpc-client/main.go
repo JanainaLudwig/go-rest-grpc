@@ -13,8 +13,8 @@ import (
 func main() {
 	config.LoadEnv(config.RootPath() + "/config/.env")
 	core.StartApp()
-
 	ctx := context.Background()
+
 	serverAddress := "localhost:" + config.App.GrpcPort
 	conn, e := grpc.DialContext(ctx, serverAddress, grpc.WithInsecure())
 	if e != nil {
@@ -24,7 +24,7 @@ func main() {
 	client := proto.NewStudentsServiceClient(conn)
 	students, e := client.GetStudents(ctx, &proto.GetStudentsRequest{})
 	if e != nil {
-		log.Println(e)
+		log.Fatal(e)
 		return
 	}
 
