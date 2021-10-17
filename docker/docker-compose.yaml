@@ -54,8 +54,8 @@ services:
       - MYSQL_ROOT_PASSWORD=password
     networks:
       - prod
-#    expose:
-#      - '6379'
+    expose:
+      - '3306'
 
 networks:
   prod:
