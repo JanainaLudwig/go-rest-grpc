@@ -9,6 +9,7 @@ import (
 )
 
 type StudentsService struct {
+	proto.UnimplementedStudentsServiceServer
 }
 
 func NewStudentsServiceController() *StudentsService {
