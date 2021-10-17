@@ -7,6 +7,7 @@ import (
 	"grpc-rest/core"
 	"grpc-rest/grpc/proto"
 	services "grpc-rest/grpc/server"
+	"log"
 	"net"
 )
 
@@ -22,11 +23,11 @@ func main() {
 
 	con, err := net.Listen("tcp", ":" + config.App.GrpcPort)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	err = server.Serve(con)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 }
 
