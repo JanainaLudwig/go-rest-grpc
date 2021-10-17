@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"google.golang.org/grpc"
 	"grpc-rest/config"
 	"grpc-rest/core"
@@ -27,7 +28,7 @@ func main() {
 		return
 	}
 
-	//log.Println(proto2.Size(students), "bytes")
-	log.Println(students.GetStudents())
+	data, err := json.MarshalIndent(students.GetStudents(), "", " ")
+	log.Println(string(data), err)
 }
 
