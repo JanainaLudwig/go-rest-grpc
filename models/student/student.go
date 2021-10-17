@@ -2,9 +2,9 @@ package student
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"grpc-rest/core"
 	"time"
-	"github.com/google/uuid"
 )
 
 type Student struct {
@@ -20,6 +20,12 @@ func FetchAll(ctx context.Context) ([]Student, error) {
 	r := Repository{db: core.DB}
 
 	return r.FetchAll(ctx)
+}
+
+func FetchById(ctx context.Context, id int) (*Student, error) {
+	r := Repository{db: core.DB}
+
+	return r.FetchById(ctx, id)
 }
 
 func Insert(ctx context.Context, std *Student) (int, error) {

@@ -11,6 +11,32 @@ type Repository struct {
 	db *sql.DB
 }
 
+func scanStudent(rows *sql.Rows) (*Student, error) {
+	var student Student
+
+	var created, updated sql.NullTime
+	err := rows.Scan(
+		&student.Id,
+		&student.FirstName,
+		&student.LastName,
+		&student.Identifier,
+		&created,
+		&updated,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if created.Valid {
+		student.CreatedAt = &created.Time
+	}
+	if updated.Valid {
+		student.UpdatedAt = &updated.Time
+	}
+
+	return &student, nil
+}
+
 func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 	rows, err := r.db.QueryContext(ctx, "SELECT id, first_name, last_name, identifier, created_at, updated_at FROM students")
 	if err != nil {
@@ -21,30 +47,13 @@ func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 
 	var students []Student
 	for rows.Next() {
-		var student Student
-
-		var created, updated sql.NullTime
-		err := rows.Scan(
-			&student.Id,
-			&student.FirstName,
-			&student.LastName,
-			&student.Identifier,
-			&created,
-			&updated,
-		)
-
-		if created.Valid {
-			student.CreatedAt = &created.Time
-		}
-		if updated.Valid {
-			student.UpdatedAt = &updated.Time
-		}
+		student, err := scanStudent(rows)
 
 		if err != nil {
 			return nil, core.NewError(nil, err, 0)
 		}
 
-		students = append(students, student)
+		students = append(students, *student)
 	}
 
 	if len(students) == 0 {
@@ -85,4 +94,21 @@ func (r *Repository) Delete(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) FetchById(ctx context.Context, id int) (*Student, error) {
+	rows, err := r.db.QueryContext(ctx, "SELECT id, first_name, last_name, identifier, created_at, updated_at FROM students")
+	if err != nil {
+		return nil, core.NewError(nil, err, 0)
+	}
+
+	defer core.DbClose(rows)
+
+	if !rows.Next() {
+		return nil, core.NewError(nil, "Students not found", http.StatusNotFound)
+	}
+
+	student, err := scanStudent(rows)
+
+	return student, err
 }

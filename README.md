@@ -30,6 +30,10 @@ go get -u google.golang.org/grpc
 
 go get -u github.com/golang/protobuf/protoc-gen-go
 
+# teste com esse
+go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
+export PATH="$PATH:$(go env GOPATH)/bin"
 ````
 Add this to ~/.bash_profile
 ```
@@ -43,6 +47,8 @@ Run ``source ~/.bash_profile`` to take effect
 ````shell
 cd grpc
 protoc --go_out=plugins=grpc:. *.proto
+
+protoc --go_out=./proto --go_opt=paths=source_relative --go-grpc_out=./proto --go-grpc_opt=paths=source_relative students.proto 
 ````
 
 ## Poc Result

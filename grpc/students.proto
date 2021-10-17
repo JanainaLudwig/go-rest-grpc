@@ -7,6 +7,19 @@ option go_package = "./proto";
 
 service StudentsService {
   rpc GetStudents (GetStudentsRequest) returns (GetStudentsResponse) {}
+  rpc CreateStudent (CreateStudentRequest) returns (Student) {}
+}
+
+message GetStudentsRequest {
+}
+
+message CreateStudentRequest {
+  string first_name = 1;
+  string last_name = 2;
+}
+
+message GetStudentsResponse {
+  repeated Student students = 1;
 }
 
 message Student {
@@ -16,11 +29,4 @@ message Student {
   string identifier = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
-}
-
-message GetStudentsRequest {
-}
-
-message GetStudentsResponse {
-  repeated Student students = 1;
 }
