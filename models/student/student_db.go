@@ -17,6 +17,8 @@ func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 		return nil, core.NewError(nil, err, 0)
 	}
 
+	defer core.DbClose(rows)
+
 	var students []Student
 	for rows.Next() {
 		var student Student
@@ -50,4 +52,37 @@ func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 	}
 
 	return students, err
+}
+
+func (r *Repository) Insert(ctx context.Context, std *Student) (int, error) {
+	res, err := r.db.ExecContext(ctx, "INSERT INTO students (first_name, last_name, identifier) VALUES (?, ?, ?)",
+		std.FirstName, std.LastName, std.Identifier)
+	if err != nil {
+		return 0, core.NewError(nil, err, 0)
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, core.WrapError(err)
+	}
+
+	return int(id), err
+}
+
+func (r *Repository) Delete(ctx context.Context, id int) error {
+	res, err := r.db.ExecContext(ctx, "DELETE FROM students WHERE id=?", id)
+	if err != nil {
+		return core.NewError(nil, err, 0)
+	}
+
+	affected, err := res.RowsAffected()
+	if err != nil {
+		return core.WrapError(err)
+	}
+
+	if affected == 0 {
+		return core.NewError(id, "Student not found", http.StatusBadRequest)
+	}
+
+	return nil
 }

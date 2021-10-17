@@ -8,6 +8,15 @@ import (
 	"net/http"
 )
 
+type ResponseCreated struct {
+	Id interface{} `json:"id,omitempty"`
+	Message string `json:"message,omitempty"`
+}
+
+func Decode(r *http.Request, data interface{}) error {
+	return json.NewDecoder(r.Body).Decode(data)
+}
+
 func SendErrorResponse(w http.ResponseWriter, err error) {
 	var response core.Error
 
@@ -21,6 +30,7 @@ func SendErrorResponse(w http.ResponseWriter, err error) {
 	if !config.App.Debug {
 		response.File = ""
 		response.Line = 0
+		response.Stack = ""
 	}
 
 	SendJsonResponse(w, response, response.Status)

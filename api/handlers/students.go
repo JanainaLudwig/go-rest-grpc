@@ -4,6 +4,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"grpc-rest/models/student"
 	"net/http"
+	"strconv"
 )
 
 func GetStudents(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -14,4 +15,40 @@ func GetStudents(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	SendJsonResponse(w, all, http.StatusOK)
+}
+
+func CreateStudent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	s := student.Student{}
+
+	err := Decode(r, &s)
+	if err != nil {
+		SendErrorResponse(w, err)
+		return
+	}
+
+	id, err := student.Insert(r.Context(), &s)
+	if err != nil {
+		SendErrorResponse(w, err)
+		return
+	}
+
+	SendJsonResponse(w, ResponseCreated{
+		Id:      id,
+		Message: "Student created",
+	}, http.StatusCreated)
+}
+
+func DeleteStudent(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id, err := strconv.Atoi(p.ByName("id"))
+
+	err = student.Delete(r.Context(), id)
+	if err != nil {
+		SendErrorResponse(w, err)
+		return
+	}
+
+	SendJsonResponse(w, ResponseCreated{
+		Id:      id,
+		Message: "Student deleted",
+	}, http.StatusCreated)
 }
