@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/newrelic/go-agent/v3/newrelic"
 	"grpc-rest/lib/database"
 	"path"
 	"runtime"
@@ -15,6 +16,12 @@ type AppConfig struct {
 	ApiPort string
 	GrpcPort string
 	DbConfig *database.Config
+	NewRelicLicence string
+	NewRelicApp *newrelic.Application
+}
+
+func (a *AppConfig) SetNewrelicApp(app *newrelic.Application) {
+	a.NewRelicApp = app
 }
 
 func LoadEnv(path string) {
@@ -36,6 +43,8 @@ func LoadEnv(path string) {
 		MaxIdleConns: 100,
 		MaxLifetime:  4 * time.Minute,
 	}
+
+	App.NewRelicLicence = loadString("NEW_RELIC_LICENCE", nil)
 }
 
 func RootPath() string {

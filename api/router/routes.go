@@ -1,13 +1,14 @@
 package router
 
 import (
-	"github.com/julienschmidt/httprouter"
+	"github.com/newrelic/go-agent/v3/integrations/nrhttprouter"
 	"grpc-rest/api/handlers"
+	"grpc-rest/config"
 	"net/http"
 )
 
 func Routes() http.Handler {
-	router := httprouter.New()
+	router := nrhttprouter.New(config.App.NewRelicApp)
 
 	router.GET("/", handlers.Index)
 	router.GET("/students", handlers.GetStudents)
