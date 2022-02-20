@@ -29,6 +29,10 @@ func WrapError(err error) error {
 	return NewError(0, err, 0)
 }
 
+func NotFoundError(id interface{}, message interface{}) *Error {
+	return NewError(id, message, http.StatusNotFound)
+}
+
 func NewError(id interface{}, message interface{}, status int) *Error {
 	_, file, line, _ := runtime.Caller(1)
 

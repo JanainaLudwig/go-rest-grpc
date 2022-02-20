@@ -37,7 +37,7 @@ func (s *StudentsService) CreateStudent(ctx context.Context, request *proto.Crea
 		LastName:   request.LastName,
 	}
 
-	idInserted, err := student.Insert(ctx, &std)
+	idInserted, err := student.Create(ctx, &std)
 	if err != nil {
 		return nil, err
 	}

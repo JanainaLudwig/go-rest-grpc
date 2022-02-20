@@ -28,12 +28,18 @@ func FetchById(ctx context.Context, id int) (*Student, error) {
 	return r.FetchById(ctx, id)
 }
 
-func Insert(ctx context.Context, std *Student) (int, error) {
+func Create(ctx context.Context, std *Student) (int, error) {
 	r := Repository{db: core.DB}
 
 	std.Identifier = uuid.New().String()
 
 	return r.Insert(ctx, std)
+}
+
+func Update(ctx context.Context, std *Student) error {
+	r := Repository{db: core.DB}
+
+	return r.Update(ctx, std)
 }
 
 func Delete(ctx context.Context, id int) error {

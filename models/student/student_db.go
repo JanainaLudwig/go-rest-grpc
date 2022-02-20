@@ -4,14 +4,17 @@ import (
 	"context"
 	"database/sql"
 	"grpc-rest/core"
-	"net/http"
 )
 
 type Repository struct {
 	db *sql.DB
 }
 
-func scanStudent(rows *sql.Rows) (*Student, error) {
+const (
+	ErrorStudentNotFound = "Student not found"
+)
+
+func scanDefaultStudent(rows *sql.Rows) (*Student, error) {
 	var student Student
 
 	var created, updated sql.NullTime
@@ -47,7 +50,7 @@ func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 
 	var students []Student
 	for rows.Next() {
-		student, err := scanStudent(rows)
+		student, err := scanDefaultStudent(rows)
 
 		if err != nil {
 			return nil, core.NewError(nil, err, 0)
@@ -57,7 +60,7 @@ func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 	}
 
 	if len(students) == 0 {
-		return nil, core.NewError(nil, "Students not found", http.StatusNotFound)
+		return nil, core.NotFoundError(nil, "Students not found")
 	}
 
 	return students, err
@@ -78,6 +81,25 @@ func (r *Repository) Insert(ctx context.Context, std *Student) (int, error) {
 	return int(id), err
 }
 
+func (r *Repository) Update(ctx context.Context, std *Student) error {
+	res, err := r.db.ExecContext(ctx, "UPDATE students SET first_name=?, last_name=? WHERE id=?",
+		std.FirstName, std.LastName, std.Id)
+	if err != nil {
+		return core.NewError(nil, err, 0)
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return core.WrapError(err)
+	}
+
+	if rows == 0 {
+		return core.NotFoundError(std.Id, ErrorStudentNotFound)
+	}
+
+	return nil
+}
+
 func (r *Repository) Delete(ctx context.Context, id int) error {
 	res, err := r.db.ExecContext(ctx, "DELETE FROM students WHERE id=?", id)
 	if err != nil {
@@ -90,14 +112,14 @@ func (r *Repository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affected == 0 {
-		return core.NewError(id, "Student not found", http.StatusNotFound)
+		return core.NotFoundError(id, ErrorStudentNotFound)
 	}
 
 	return nil
 }
 
 func (r *Repository) FetchById(ctx context.Context, id int) (*Student, error) {
-	rows, err := r.db.QueryContext(ctx, "SELECT id, first_name, last_name, identifier, created_at, updated_at FROM students")
+	rows, err := r.db.QueryContext(ctx, "SELECT id, first_name, last_name, identifier, created_at, updated_at FROM students WHERE id=?", id)
 	if err != nil {
 		return nil, core.NewError(nil, err, 0)
 	}
@@ -105,10 +127,10 @@ func (r *Repository) FetchById(ctx context.Context, id int) (*Student, error) {
 	defer core.DbClose(rows)
 
 	if !rows.Next() {
-		return nil, core.NewError(nil, "Students not found", http.StatusNotFound)
+		return nil, core.NotFoundError(id, ErrorStudentNotFound)
 	}
 
-	student, err := scanStudent(rows)
+	student, err := scanDefaultStudent(rows)
 
 	return student, err
 }
