@@ -13,6 +13,10 @@ type ResponseCreated struct {
 	Message string `json:"message,omitempty"`
 }
 
+type ResponseId struct {
+	Id interface{} `json:"id,omitempty"`
+}
+
 func Decode(r *http.Request, data interface{}) error {
 	return json.NewDecoder(r.Body).Decode(data)
 }
@@ -41,6 +45,9 @@ func SendJsonResponse(w http.ResponseWriter, data interface{}, status int) {
 	w.Header()
 	w.WriteHeader(status)
 
+	if data == nil {
+		return
+	}
 	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
 		log.Println("Error sending json response", err)

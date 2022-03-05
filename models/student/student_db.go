@@ -82,19 +82,10 @@ func (r *Repository) Insert(ctx context.Context, std *Student) (int, error) {
 }
 
 func (r *Repository) Update(ctx context.Context, std *Student) error {
-	res, err := r.db.ExecContext(ctx, "UPDATE students SET first_name=?, last_name=? WHERE id=?",
+	_, err := r.db.ExecContext(ctx, "UPDATE students SET first_name=?, last_name=? WHERE id=?",
 		std.FirstName, std.LastName, std.Id)
 	if err != nil {
 		return core.NewError(nil, err, 0)
-	}
-
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return core.WrapError(err)
-	}
-
-	if rows == 0 {
-		return core.NotFoundError(std.Id, ErrorStudentNotFound)
 	}
 
 	return nil

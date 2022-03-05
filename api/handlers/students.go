@@ -48,9 +48,8 @@ func CreateStudent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		return
 	}
 
-	SendJsonResponse(w, ResponseCreated{
+	SendJsonResponse(w, ResponseId{
 		Id:      id,
-		Message: "Student created",
 	}, http.StatusCreated)
 }
 
@@ -75,10 +74,7 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
 		return
 	}
 
-	SendJsonResponse(w, ResponseCreated{
-		Id:      s.Id,
-		Message: "Student updated",
-	}, http.StatusCreated)
+	SendJsonResponse(w, nil, http.StatusOK)
 }
 
 func DeleteStudent(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -90,8 +86,5 @@ func DeleteStudent(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
 		return
 	}
 
-	SendJsonResponse(w, ResponseCreated{
-		Id:      id,
-		Message: "Student deleted",
-	}, http.StatusCreated)
+	SendJsonResponse(w, nil, http.StatusOK)
 }
