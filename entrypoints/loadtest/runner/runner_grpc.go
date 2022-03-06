@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc"
 	"grpc-rest/grpc/proto"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -36,34 +37,47 @@ func (r *RunnerGrpc) AddLoad(load Load) {
 func (r *RunnerGrpc) Run() {
 	for i, load := range r.loads {
 		log.Printf("Running load %v - timer %v", i, load.Duration)
-		stop := make(chan bool, 1)
-		go func() {
-			defer func() {
-				log.Println("release")
-				stop <- true
-			}()
+		//stop := make(chan bool, 1)
+		//go func() {
+		//	defer func() {
+		//		log.Println("release")
+		//		stop <- true
+		//	}()
 			ticker := time.NewTicker(1 * time.Second)
 			timer := time.NewTimer(load.Duration)
+			wg := sync.WaitGroup{}
+			wg.Add(1)
 
-			for {
-				select {
-				case <-ticker.C:
-					log.Printf("running load with %v calls", load.CallsPerSecond)
-					for call := 0; call < load.CallsPerSecond; call++ {
-						_, err := r.client.GetStudents(r.ctx, &proto.GetStudentsRequest{})
-						if err != nil {
-							log.Println(err)
-						}
+			go func() {
+				defer func() {
+					wg.Done()
+				}()
+				for {
+					select {
+					case <-ticker.C:
+						wg.Add(load.CallsPerSecond)
+						go func() {
+							log.Printf("running load with %v calls", load.CallsPerSecond)
+							for call := 0; call < load.CallsPerSecond; call++ {
+								_, err := r.client.GetStudents(r.ctx, &proto.GetStudentsRequest{})
+								wg.Done()
+								if err != nil {
+									log.Println(err)
+								}
+							}
+						}()
+					case <- timer.C:
+						log.Printf("stopping load")
+						return
 					}
-				case <- timer.C:
-					log.Printf("stopping load")
-					return
 				}
-			}
 
-		}()
+			}()
 
-		<-stop
+		//}()
+
+		wg.Wait()
+		//<-stop
 		log.Println("finished")
 	}
 }
