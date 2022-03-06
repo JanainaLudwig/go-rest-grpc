@@ -15,7 +15,7 @@ func main() {
 	log.Println("Starting the " + config.App.AppEnv + " API...", "Go to http://localhost:" + config.App.ApiPort)
 
 	app, err := newrelic.NewApplication(
-		newrelic.ConfigAppName("go-rest-grpc"),
+		newrelic.ConfigAppName("comparison-go-rest"),
 		newrelic.ConfigLicense(config.App.NewRelicLicence),
 		newrelic.ConfigDistributedTracerEnabled(true),
 	)
