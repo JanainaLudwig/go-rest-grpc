@@ -1,8 +1,8 @@
-package main
+package runner
 
 import "time"
 
 type Load struct {
-	CallsPerSecond uint
+	CallsPerSecond int
 	Duration time.Duration
 }
