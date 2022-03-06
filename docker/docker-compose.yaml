@@ -35,7 +35,7 @@ services:
       context: ../
     container_name: grpc-dev
     volumes:
-      - ./grpc:/grpc
+      - ../grpc:/go/grpc
 
   redis:
     image: redis

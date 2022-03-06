@@ -7,16 +7,23 @@ RUN apt install -y protobuf-compiler
 
 WORKDIR .
 
+#RUN adduser user
+#RUN chown -R user:user /go/grpc
+##RUN chmod -R 755 /grpc
+#USER user
+
 COPY /grpc ./grpc
-COPY protoc.sh .
+#COPY /grpc/protoc.sh ./grpc/protoc.sh
 
+RUN export PATH=$PATH:/usr/local/go/bin/go
+RUN export GO111MODULE=on
 
-RUN go get -u google.golang.org/grpc \
-    github.com/golang/protobuf/protoc-gen-go \
-    google.golang.org/grpc/cmd/protoc-gen-go-grpc
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
 
-#RUN echo $(cat /grpc/students.proto)
-#RUN ["protoc -I=/grpc/proto --go_out=/grpc/proto /grpc/students.proto"]
-#RUN ["ls"]
+RUN export PATH="$PATH:$(go env GOPATH)/bin"
 
-ENTRYPOINT ["./protoc.sh"]
+WORKDIR /go/grpc
+#RUN #sh ./protoc.sh
+
+#ENTRYPOINT ["./protoc.sh"]
