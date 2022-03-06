@@ -1,32 +1,22 @@
 # STEP 1
-FROM golang:1.16-alpine AS build
+FROM golang:1.17 AS build
 
-RUN apk add --no-cache git
+RUN apt-get update
+RUN apt install -y protobuf-compiler
 
-WORKDIR /source
 
-COPY go.mod .
-COPY go.sum .
+WORKDIR .
 
-RUN go mod download
+COPY /grpc ./grpc
+COPY protoc.sh .
 
-RUN go get -u google.golang.org/grpc
-RUN go get -u github.com/golang/protobuf/protoc-gen-go
 
-COPY . .
+RUN go get -u google.golang.org/grpc \
+    github.com/golang/protobuf/protoc-gen-go \
+    google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
-#RUN CGO_ENABLED=0 go test -v
+#RUN echo $(cat /grpc/students.proto)
+#RUN ["protoc -I=/grpc/proto --go_out=/grpc/proto /grpc/students.proto"]
+#RUN ["ls"]
 
-RUN go build -o ./out/grpc-server entrypoints/grpc-server/main.go
-
-# STEP 2
-FROM alpine:3.9
-RUN apk add ca-certificates
-
-COPY --from=build /source/out/grpc-server /app/grpc-server
-
-COPY config/.env /source/config/.env
-
-EXPOSE 9000
-
-CMD ["/app/grpc-server"]
+ENTRYPOINT ["./protoc.sh"]

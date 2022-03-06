@@ -1,1 +1,0 @@
-cd grpc/proto && --go_out=plugins=grpc:. grpc/*.proto

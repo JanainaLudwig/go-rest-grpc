@@ -29,6 +29,14 @@ services:
       environment:
         - MYSQL_HOST=mysql_api
 
+  grpc-dev:
+    build:
+      dockerfile: ./docker/grpc-dev/Dockerfile
+      context: ../
+    container_name: grpc-dev
+    volumes:
+      - ./grpc:/grpc
+
   redis:
     image: redis
     container_name: redis
