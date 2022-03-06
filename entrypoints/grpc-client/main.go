@@ -26,6 +26,7 @@ func main() {
 	listAll(ctx, client)
 	id := createSample(ctx, client)
 	getById(ctx, client, id)
+	getById(ctx, client, 1550)
 }
 
 func listAll(ctx context.Context, client proto.StudentsServiceClient) {

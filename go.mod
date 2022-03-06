@@ -3,6 +3,7 @@ module grpc-rest
 go 1.16
 
 require (
+	github.com/bojand/ghz v0.106.1
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.1.2

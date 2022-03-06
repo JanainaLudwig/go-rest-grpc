@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"grpc-rest/core"
 	"grpc-rest/grpc"
 	"grpc-rest/grpc/proto"
 	"grpc-rest/models/student"
@@ -51,7 +52,7 @@ func (s *StudentsService) CreateStudent(ctx context.Context, req *proto.CreateSt
 func (s *StudentsService) GetStudentById(ctx context.Context, req *proto.GetStudentByIdRequest) (*proto.GetStudentByIdResponse, error) {
 	fetchById, err := student.FetchById(ctx, int(req.Id))
 	if err != nil {
-		return nil, err
+		return nil, core.GrpcError(err)
 	}
 
 	return &proto.GetStudentByIdResponse{

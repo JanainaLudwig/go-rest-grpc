@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"net/http"
 	"runtime"
 )
@@ -13,10 +15,36 @@ type Error struct {
 	File string `json:"file,omitempty"`
 	Line int `json:"line,omitempty"`
 	Stack string `json:"stack,omitempty"`
+	grpcErrorCode codes.Code
 }
 
 func (e *Error) Error() string {
 	return e.Message
+}
+
+func (e *Error) mapStatus(status int) codes.Code {
+	switch status {
+	case http.StatusNotFound:
+		return codes.NotFound
+	case http.StatusUnauthorized:
+		return codes.Unauthenticated
+	case http.StatusForbidden:
+		return codes.PermissionDenied
+	default:
+		return codes.Unknown
+	}
+}
+
+func (e *Error) ToGrpcError() error {
+	return status.Error(e.grpcErrorCode, e.Message)
+}
+
+func GrpcError(err error) error {
+	if err, ok := err.(*Error); ok {
+		return err.ToGrpcError()
+	}
+
+	return status.Error(codes.Unknown, err.Error())
 }
 
 func WrapError(err error) error {
@@ -46,6 +74,8 @@ func NewError(id interface{}, message interface{}, status int) *Error {
 		Line: line,
 		Status: status,
 	}
+
+	e.grpcErrorCode = e.mapStatus(status)
 
 	switch val := message.(type) {
 	case error:
