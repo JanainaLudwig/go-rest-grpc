@@ -22,6 +22,13 @@ func main() {
 	}
 
 	client := proto.NewStudentsServiceClient(conn)
+
+	listAll(ctx, client)
+	id := createSample(ctx, client)
+	getById(ctx, client, id)
+}
+
+func listAll(ctx context.Context, client proto.StudentsServiceClient) {
 	students, e := client.GetStudents(ctx, &proto.GetStudentsRequest{})
 	if e != nil {
 		log.Fatal(e)
@@ -30,5 +37,27 @@ func main() {
 
 	data, err := json.MarshalIndent(students.GetStudents(), "", " ")
 	log.Println(string(data), err)
+}
+
+func createSample(ctx context.Context, client proto.StudentsServiceClient) int {
+	student, err := client.CreateStudent(ctx, &proto.CreateStudentRequest{
+		FirstName: "Janaina",
+		LastName:  "Ludwig",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return int(student.Id)
+}
+
+
+func getById(ctx context.Context, client proto.StudentsServiceClient, id int) {
+	student, err := client.GetStudentById(ctx, &proto.GetStudentByIdRequest{Id: int64(id)})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(student)
 }
 
