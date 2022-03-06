@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.9'
 services:
   api:
     build:
@@ -14,6 +14,7 @@ services:
       - "redis"
     environment:
       - MYSQL_HOST=mysql_api
+    profiles: ["server"]
   grpc-server:
       build:
         dockerfile: ./docker/grpc/Dockerfile
@@ -28,6 +29,7 @@ services:
         - "redis"
       environment:
         - MYSQL_HOST=mysql_api
+      profiles: ["server"]
 
   grpc-dev:
     build:
@@ -43,8 +45,7 @@ services:
     hostname: redis_api
     networks:
       - prod
-    depends_on:
-      - mysql
+    profiles: ["server", "db"]
 
   mysql:
     image: mysql
@@ -64,6 +65,7 @@ services:
       - prod
     expose:
       - '3306'
+    profiles: ["server", "db"]
 
 networks:
   prod:
