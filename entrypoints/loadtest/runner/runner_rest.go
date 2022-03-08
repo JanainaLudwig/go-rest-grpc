@@ -35,8 +35,9 @@ func (r *Rest) TestFunc()  {
 		return
 	}
 
-	_, err = r.client.Do(req)
+	res, err := r.client.Do(req)
 	if err != nil {
 		log.Println(err)
 	}
+	res.Body.Close()
 }
