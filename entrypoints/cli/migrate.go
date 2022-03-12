@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"grpc-rest/config"
 	"grpc-rest/core"
+	"grpc-rest/database/seed"
 	"log"
 	"os"
 	"time"
@@ -13,8 +15,9 @@ import (
 func main() {
 	config.LoadEnv(config.RootPath() + "/config/.env")
 	core.StartApp(true)
+	ctx := context.Background()
 
-	action := flag.String("action", "", "create,migrate,migrate:down")
+	action := flag.String("action", "", "create,migrate,migrate:down,seed")
 	name := flag.String("name", "", "(create) Name of the migration")
 
 	flag.Parse()
@@ -24,6 +27,8 @@ func main() {
 		createMigrationFile(*name)
 	case "migrate":
 		core.RunMigrations()
+	case "seed":
+		seed.RunSeed(ctx)
 	case "migrate:down":
 		core.DownMigrations()
 	}

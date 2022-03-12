@@ -10,7 +10,7 @@ import (
 )
 
 func RunMigrations() {
-	m := getMigrationClient()
+	m := getMigrationClient("migrations")
 	err := m.Up()
 	if err != nil {
 		if err == migrate.ErrNoChange {
@@ -22,7 +22,7 @@ func RunMigrations() {
 }
 
 func DownMigrations() {
-	m := getMigrationClient()
+	m := getMigrationClient("migrations")
 	err := m.Down()
 	if err != nil {
 		if err == migrate.ErrNoChange {
@@ -33,7 +33,7 @@ func DownMigrations() {
 	}
 }
 
-func getMigrationClient() *migrate.Migrate {
+func getMigrationClient(path string) *migrate.Migrate {
 
 	db :=  database.NewConnectionPoolMulti(config.App.DbConfig)
 	driver, err := mysql.WithInstance(db, &mysql.Config{
@@ -43,7 +43,7 @@ func getMigrationClient() *migrate.Migrate {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file:///" + RootPath() + "/database/migrations",
+		"file:///" + RootPath() + "/database/" + path,
 		"postgres", driver)
 	if err != nil {
 		log.Fatalln(err)

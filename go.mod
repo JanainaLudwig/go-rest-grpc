@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/bojand/ghz v0.106.1 // indirect
+	github.com/bxcodec/faker/v3 v3.8.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/golang/protobuf v1.5.2
