@@ -5,9 +5,11 @@ import (
 	"runtime"
 )
 
-func StartApp()  {
+func StartApp(runMigration bool) {
 	StartDb()
-	RunMigrations()
+	if runMigration {
+		RunMigrations()
+	}
 }
 
 func RootPath() string {

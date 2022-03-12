@@ -1,1 +1,1 @@
-DROP TABLE subjects
+DROP TABLE subjects;

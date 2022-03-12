@@ -1,1 +1,1 @@
-DROP TABLE students_subjects
+DROP TABLE students_subjects;

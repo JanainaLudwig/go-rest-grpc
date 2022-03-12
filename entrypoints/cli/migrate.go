@@ -12,9 +12,9 @@ import (
 
 func main() {
 	config.LoadEnv(config.RootPath() + "/config/.env")
-	core.StartApp()
+	core.StartApp(true)
 
-	action := flag.String("action", "", "create,migrate")
+	action := flag.String("action", "", "create,migrate,migrate:down")
 	name := flag.String("name", "", "(create) Name of the migration")
 
 	flag.Parse()
@@ -24,6 +24,8 @@ func main() {
 		createMigrationFile(*name)
 	case "migrate":
 		core.RunMigrations()
+	case "migrate:down":
+		core.DownMigrations()
 	}
 
 }

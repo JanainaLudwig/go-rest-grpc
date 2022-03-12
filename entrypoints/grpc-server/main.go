@@ -26,7 +26,7 @@ func main() {
 	}
 	config.App.SetNewrelicApp(app)
 
-	core.StartApp()
+	core.StartApp(true)
 
 	server := grpc.NewServer(
 		grpc.UnaryInterceptor(nrgrpc.UnaryServerInterceptor(app)),

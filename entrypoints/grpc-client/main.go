@@ -12,7 +12,7 @@ import (
 
 func main() {
 	config.LoadEnv(config.RootPath() + "/config/.env")
-	core.StartApp()
+	core.StartApp(true)
 	ctx := context.Background()
 
 	serverAddress := "localhost:" + config.App.GrpcPort

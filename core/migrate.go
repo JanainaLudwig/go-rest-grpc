@@ -10,6 +10,31 @@ import (
 )
 
 func RunMigrations() {
+	m := getMigrationClient()
+	err := m.Up()
+	if err != nil {
+		if err == migrate.ErrNoChange {
+			return
+		}
+		log.Fatalln(err)
+		return
+	}
+}
+
+func DownMigrations() {
+	m := getMigrationClient()
+	err := m.Down()
+	if err != nil {
+		if err == migrate.ErrNoChange {
+			return
+		}
+		log.Fatalln(err)
+		return
+	}
+}
+
+func getMigrationClient() *migrate.Migrate {
+
 	db :=  database.NewConnectionPoolMulti(config.App.DbConfig)
 	driver, err := mysql.WithInstance(db, &mysql.Config{
 	})
@@ -23,9 +48,6 @@ func RunMigrations() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = m.Up()
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
+
+	return m
 }

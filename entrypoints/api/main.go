@@ -24,7 +24,7 @@ func main() {
 	}
 	config.App.SetNewrelicApp(app)
 
-	core.StartApp()
+	core.StartApp(true)
 
 	router.StartApi()
 }
