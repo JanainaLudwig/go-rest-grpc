@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-func runMigration() {
+func RunMigrations() {
 	db :=  database.NewConnectionPoolMulti(config.App.DbConfig)
 	driver, err := mysql.WithInstance(db, &mysql.Config{
 	})

@@ -3,30 +3,36 @@ package main
 import (
 	"flag"
 	"fmt"
+	"grpc-rest/config"
 	"grpc-rest/core"
 	"log"
 	"os"
 	"time"
 )
 
-func main()  {
-	action := flag.String("action", "", "create")
-	 name := flag.String("name", "", "Name of the migration")
+func main() {
+	config.LoadEnv(config.RootPath() + "/config/.env")
+	core.StartApp()
+
+	action := flag.String("action", "", "create,migrate")
+	name := flag.String("name", "", "(create) Name of the migration")
 
 	flag.Parse()
 
-	switch action {
-	case action:
+	switch *action {
+	case "create":
 		createMigrationFile(*name)
+	case "migrate":
+		core.RunMigrations()
 	}
 
 }
 
 func createMigrationFile(name string) {
 	path := core.RootPath() + "/database/migrations"
-	up := time.Now().UnixNano()
+	version := time.Now().UnixNano()
 
-	path = fmt.Sprintf("%v/%v_%v", path, up, name)
+	path = fmt.Sprintf("%v/%v_%v", path, version, name)
 
 	createUp, err := os.Create(path + ".up.sql")
 	if err != nil {

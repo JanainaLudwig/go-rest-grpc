@@ -9,42 +9,41 @@ Download this repository and run
 docker-compose -f docker/docker-compose.yaml up --build
 ````
 
+#### Profiles
+Profiles can be used to start only a group of containers, and not all of them. The available profiles are:
+- ***db***: only db containers
+- ***server***: only db and server containers
+
+**Example**
+
+``docker-compose -f docker/docker-compose.yaml --profile db up``
+
 ### With local go installation
-If you don't have docker installed, you can run with a local go installation.
 
-#### Install golang
-
-#### Run
+Install golang, the run
 ````shell
 go mod vendor
 go mod download
 go run entrypoints/api/main.go
 ````
 
-## Protocol buffer
-### Install protoc compiler
+### Protocol buffer
+There is a configured container for compiling the protocol buffers. Run:
+
 ````shell
-apt install -y protobuf-compiler
-
-go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
-export PATH="$PATH:$(go env GOPATH)/bin"
-````
-Add this to ~/.bash_profile
-```
-export GO_PATH=~/go
-export PATH=$PATH:/$GO_PATH/bin
-```
-
-Run ``source ~/.bash_profile`` to take effect
-
-### Compiling .proto
-````shell
-cd grpc
-protoc --go_out=./proto --go_opt=paths=source_relative --go-grpc_out=./proto --go-grpc_opt=paths=source_relative students.proto 
+docker-compose -f docker/docker-compose.yaml run grpc-dev
+sh protoc.sh
 ````
 
-## Poc Result
+## Migrations
+Migration are run on the startup of the applications. To create a new migration, run:
+```shell
+go run entrypoints/cli/migrate.go --action create --name create_subjects_table
+```
+This will create two files in database/migrations folder (up and down file).
+To run the migrations without starting the application, run `` go run entrypoints/cli/migrate.go --action migrate``
+
+## Poc Result (WIP)
 ### Payload size
 With 1000 registers in students database:
 Rest: 149,000kB

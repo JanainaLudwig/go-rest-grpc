@@ -7,7 +7,7 @@ import (
 
 func StartApp()  {
 	StartDb()
-	runMigration()
+	RunMigrations()
 }
 
 func RootPath() string {
