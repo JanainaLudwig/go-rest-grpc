@@ -32,6 +32,20 @@ func NewConnectionPool(config *Config) *sql.DB {
 	return db
 }
 
+func NewConnectionPoolMulti(config *Config) *sql.DB {
+	db, err := sql.Open("mysql", config.User+":"+config.Password+"@tcp("+config.Host+":"+config.Port+")/"+config.Database+"?parseTime=true&multiStatements=true")
+	if err != nil {
+		log.Println("Error opening db connection", err)
+		return nil
+	}
+
+	db.SetConnMaxLifetime(config.MaxLifetime)
+	db.SetMaxOpenConns(config.MaxOpenConns)
+	db.SetMaxIdleConns(config.MaxIdleConns)
+
+	return db
+}
+
 func CloseRows(rows *sql.Rows) {
 	err := rows.Close()
 	if err != nil {
