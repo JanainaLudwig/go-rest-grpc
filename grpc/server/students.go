@@ -4,6 +4,7 @@ import (
 	"context"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"grpc-rest/core"
+	"grpc-rest/domain"
 	"grpc-rest/grpc"
 	"grpc-rest/grpc/proto"
 	"grpc-rest/models/student"
@@ -34,7 +35,7 @@ func (s *StudentsService) GetStudents(ctx context.Context, req *proto.GetStudent
 }
 
 func (s *StudentsService) CreateStudent(ctx context.Context, req *proto.CreateStudentRequest) (*proto.CreateStudentResponse, error) {
-	std := student.Student{
+	std := domain.Student{
 		FirstName:  req.FirstName,
 		LastName:   req.LastName,
 	}
@@ -61,7 +62,7 @@ func (s *StudentsService) GetStudentById(ctx context.Context, req *proto.GetStud
 }
 
 func (s *StudentsService) UpdateStudentById(ctx context.Context, req *proto.UpdateStudentByIdRequest) (*proto.UpdateStudentByIdResponse, error) {
-	err := student.Update(ctx, &student.Student{
+	err := student.Update(ctx, &domain.Student{
 		Id:        int(req.Id),
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
@@ -83,7 +84,7 @@ func (s *StudentsService) DeleteStudentById(ctx context.Context, req *proto.Dele
 	return &proto.DeleteStudentByIdResponse{}, nil
 }
 
-func (s *StudentsService) studentToProto(std *student.Student) *proto.Student {
+func (s *StudentsService) studentToProto(std *domain.Student) *proto.Student {
 	return &proto.Student{
 		Id:         int64(std.Id),
 		FirstName:  std.FirstName,
@@ -94,8 +95,8 @@ func (s *StudentsService) studentToProto(std *student.Student) *proto.Student {
 	}
 }
 
-func (s *StudentsService) protoToStudent(std *proto.Student) *student.Student {
-	return &student.Student{
+func (s *StudentsService) protoToStudent(std *proto.Student) *domain.Student {
+	return &domain.Student{
 		Id: int(std.Id),
 		FirstName:  std.FirstName,
 		LastName:   std.LastName,

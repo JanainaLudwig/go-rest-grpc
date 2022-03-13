@@ -14,6 +14,7 @@ func Routes() http.Handler {
 	router.GET("/students", handlers.GetStudents)
 	router.POST("/students", handlers.CreateStudent)
 	router.GET("/students/:id_student", handlers.GetStudentById)
+	router.GET("/students/:id_student/subjects", handlers.GetStudentSubjectsById)
 	router.PUT("/students/:id_student", handlers.UpdateStudent)
 	router.DELETE("/students/:id", handlers.DeleteStudent)
 

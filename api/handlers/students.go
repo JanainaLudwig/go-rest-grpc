@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"grpc-rest/domain"
 	"grpc-rest/models/student"
+	"grpc-rest/models/student_subject"
 	"net/http"
 	"strconv"
 )
@@ -33,8 +35,36 @@ func GetStudentById(w http.ResponseWriter, r *http.Request, p httprouter.Params)
 	SendJsonResponse(w, all, http.StatusOK)
 }
 
+func GetStudentSubjectsById(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id, err := strconv.Atoi(p.ByName("id_student"))
+	if err != nil {
+		SendErrorResponse(w, err)
+		return
+	}
+
+	std, err := student.FetchById(r.Context(), id)
+	if err != nil {
+		SendErrorResponse(w, err)
+		return
+	}
+
+	subjects, err := student_subject.FetchByStudentSubjectId(r.Context(), id)
+	if err != nil {
+		SendErrorResponse(w, err)
+		return
+	}
+
+	SendJsonResponse(w, struct {
+		domain.Student
+		Subjects []domain.StudentSubjectWithSubject `json:"subjects"`
+	}{
+		Student:  *std,
+		Subjects: subjects,
+	}, http.StatusOK)
+}
+
 func CreateStudent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	s := student.Student{}
+	s := domain.Student{}
 
 	err := Decode(r, &s)
 	if err != nil {
@@ -54,7 +84,7 @@ func CreateStudent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 }
 
 func UpdateStudent(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	s := student.Student{}
+	s := domain.Student{}
 
 	err := Decode(r, &s)
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"grpc-rest/core"
+	"grpc-rest/domain"
 )
 
 type Repository struct {
@@ -14,8 +15,8 @@ const (
 	ErrorStudentNotFound = "Student not found"
 )
 
-func scanDefaultStudent(rows *sql.Rows) (*Student, error) {
-	var student Student
+func scanDefaultStudent(rows *sql.Rows) (*domain.Student, error) {
+	var student domain.Student
 
 	var created, updated sql.NullTime
 	err := rows.Scan(
@@ -40,7 +41,7 @@ func scanDefaultStudent(rows *sql.Rows) (*Student, error) {
 	return &student, nil
 }
 
-func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
+func (r *Repository) FetchAll(ctx context.Context) ([]domain.Student, error) {
 	rows, err := r.db.QueryContext(ctx, "SELECT id, first_name, last_name, identifier, created_at, updated_at FROM students")
 	if err != nil {
 		return nil, core.NewError(nil, err, 0)
@@ -48,7 +49,7 @@ func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 
 	defer core.DbClose(rows)
 
-	var students []Student
+	var students []domain.Student
 	for rows.Next() {
 		student, err := scanDefaultStudent(rows)
 
@@ -66,7 +67,7 @@ func (r *Repository) FetchAll(ctx context.Context) ([]Student, error) {
 	return students, err
 }
 
-func (r *Repository) Insert(ctx context.Context, std *Student) (int, error) {
+func (r *Repository) Insert(ctx context.Context, std *domain.Student) (int, error) {
 	res, err := r.db.ExecContext(ctx, "INSERT INTO students (first_name, last_name, identifier) VALUES (?, ?, ?)",
 		std.FirstName, std.LastName, std.Identifier)
 	if err != nil {
@@ -81,7 +82,7 @@ func (r *Repository) Insert(ctx context.Context, std *Student) (int, error) {
 	return int(id), err
 }
 
-func (r *Repository) Update(ctx context.Context, std *Student) error {
+func (r *Repository) Update(ctx context.Context, std *domain.Student) error {
 	_, err := r.db.ExecContext(ctx, "UPDATE students SET first_name=?, last_name=? WHERE id=?",
 		std.FirstName, std.LastName, std.Id)
 	if err != nil {
@@ -109,7 +110,7 @@ func (r *Repository) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (r *Repository) FetchById(ctx context.Context, id int) (*Student, error) {
+func (r *Repository) FetchById(ctx context.Context, id int) (*domain.Student, error) {
 	rows, err := r.db.QueryContext(ctx, "SELECT id, first_name, last_name, identifier, created_at, updated_at FROM students WHERE id=?", id)
 	if err != nil {
 		return nil, core.NewError(nil, err, 0)

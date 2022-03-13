@@ -4,31 +4,22 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"grpc-rest/core"
-	"time"
+	"grpc-rest/domain"
 )
 
-type Student struct {
-	Id         int       `json:"id"`
-	FirstName  string    `json:"first_name"`
-	LastName   string    `json:"last_name"`
-	Identifier string    `json:"identifier"`
-	CreatedAt  *time.Time `json:"created_at"`
-	UpdatedAt  *time.Time `json:"updated_at"`
-}
-
-func FetchAll(ctx context.Context) ([]Student, error) {
+func FetchAll(ctx context.Context) ([]domain.Student, error) {
 	r := Repository{db: core.DB}
 
 	return r.FetchAll(ctx)
 }
 
-func FetchById(ctx context.Context, id int) (*Student, error) {
+func FetchById(ctx context.Context, id int) (*domain.Student, error) {
 	r := Repository{db: core.DB}
 
 	return r.FetchById(ctx, id)
 }
 
-func Create(ctx context.Context, std *Student) (int, error) {
+func Create(ctx context.Context, std *domain.Student) (int, error) {
 	r := Repository{db: core.DB}
 
 	std.Identifier = uuid.New().String()
@@ -36,7 +27,7 @@ func Create(ctx context.Context, std *Student) (int, error) {
 	return r.Insert(ctx, std)
 }
 
-func Update(ctx context.Context, std *Student) error {
+func Update(ctx context.Context, std *domain.Student) error {
 	r := Repository{db: core.DB}
 
 	return r.Update(ctx, std)
