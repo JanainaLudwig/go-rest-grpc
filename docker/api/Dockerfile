@@ -23,6 +23,7 @@ RUN apk add ca-certificates
 COPY --from=build /source/out/go-api /app/go-api
 
 COPY config/.env /source/config/.env
+COPY database/ /source/database/
 
 EXPOSE 8080
 

@@ -26,6 +26,7 @@ RUN apk add ca-certificates
 COPY --from=build /source/out/grpc-server /app/grpc-server
 
 COPY config/.env /source/config/.env
+COPY database/ /source/database/
 
 EXPOSE 9000
 

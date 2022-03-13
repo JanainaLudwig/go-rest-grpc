@@ -21,6 +21,7 @@ type StudentsServiceClient interface {
 	GetStudents(ctx context.Context, in *GetStudentsRequest, opts ...grpc.CallOption) (*GetStudentsResponse, error)
 	CreateStudent(ctx context.Context, in *CreateStudentRequest, opts ...grpc.CallOption) (*CreateStudentResponse, error)
 	GetStudentById(ctx context.Context, in *GetStudentByIdRequest, opts ...grpc.CallOption) (*GetStudentByIdResponse, error)
+	GetStudentByIdWithSubjects(ctx context.Context, in *GetStudentByIdRequest, opts ...grpc.CallOption) (*GetStudentByIdWithSubjectsResponse, error)
 	UpdateStudentById(ctx context.Context, in *UpdateStudentByIdRequest, opts ...grpc.CallOption) (*UpdateStudentByIdResponse, error)
 	DeleteStudentById(ctx context.Context, in *DeleteStudentByIdRequest, opts ...grpc.CallOption) (*DeleteStudentByIdResponse, error)
 }
@@ -60,6 +61,15 @@ func (c *studentsServiceClient) GetStudentById(ctx context.Context, in *GetStude
 	return out, nil
 }
 
+func (c *studentsServiceClient) GetStudentByIdWithSubjects(ctx context.Context, in *GetStudentByIdRequest, opts ...grpc.CallOption) (*GetStudentByIdWithSubjectsResponse, error) {
+	out := new(GetStudentByIdWithSubjectsResponse)
+	err := c.cc.Invoke(ctx, "/grpc.StudentsService/GetStudentByIdWithSubjects", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *studentsServiceClient) UpdateStudentById(ctx context.Context, in *UpdateStudentByIdRequest, opts ...grpc.CallOption) (*UpdateStudentByIdResponse, error) {
 	out := new(UpdateStudentByIdResponse)
 	err := c.cc.Invoke(ctx, "/grpc.StudentsService/UpdateStudentById", in, out, opts...)
@@ -85,6 +95,7 @@ type StudentsServiceServer interface {
 	GetStudents(context.Context, *GetStudentsRequest) (*GetStudentsResponse, error)
 	CreateStudent(context.Context, *CreateStudentRequest) (*CreateStudentResponse, error)
 	GetStudentById(context.Context, *GetStudentByIdRequest) (*GetStudentByIdResponse, error)
+	GetStudentByIdWithSubjects(context.Context, *GetStudentByIdRequest) (*GetStudentByIdWithSubjectsResponse, error)
 	UpdateStudentById(context.Context, *UpdateStudentByIdRequest) (*UpdateStudentByIdResponse, error)
 	DeleteStudentById(context.Context, *DeleteStudentByIdRequest) (*DeleteStudentByIdResponse, error)
 	mustEmbedUnimplementedStudentsServiceServer()
@@ -102,6 +113,9 @@ func (UnimplementedStudentsServiceServer) CreateStudent(context.Context, *Create
 }
 func (UnimplementedStudentsServiceServer) GetStudentById(context.Context, *GetStudentByIdRequest) (*GetStudentByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStudentById not implemented")
+}
+func (UnimplementedStudentsServiceServer) GetStudentByIdWithSubjects(context.Context, *GetStudentByIdRequest) (*GetStudentByIdWithSubjectsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStudentByIdWithSubjects not implemented")
 }
 func (UnimplementedStudentsServiceServer) UpdateStudentById(context.Context, *UpdateStudentByIdRequest) (*UpdateStudentByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateStudentById not implemented")
@@ -176,6 +190,24 @@ func _StudentsService_GetStudentById_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StudentsService_GetStudentByIdWithSubjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStudentByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentsServiceServer).GetStudentByIdWithSubjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.StudentsService/GetStudentByIdWithSubjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentsServiceServer).GetStudentByIdWithSubjects(ctx, req.(*GetStudentByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _StudentsService_UpdateStudentById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateStudentByIdRequest)
 	if err := dec(in); err != nil {
@@ -230,6 +262,10 @@ var StudentsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStudentById",
 			Handler:    _StudentsService_GetStudentById_Handler,
+		},
+		{
+			MethodName: "GetStudentByIdWithSubjects",
+			Handler:    _StudentsService_GetStudentByIdWithSubjects_Handler,
 		},
 		{
 			MethodName: "UpdateStudentById",

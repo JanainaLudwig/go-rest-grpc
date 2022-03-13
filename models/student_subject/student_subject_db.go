@@ -94,12 +94,11 @@ func (r *Repository) FetchByStudentSubjectId(ctx context.Context, idStudent int)
 			 &ss.Status,
 			 &ss.CreatedAt,
 			 &ss.UpdatedAt,
-			 &ss.Subject.Name,
+			 &ss.Name,
 		)
 		if err != nil {
 			return nil, core.NewError(nil, err, 0)
 		}
-		ss.Subject.Id = ss.IdSubject
 
 		students = append(students, ss)
 	}

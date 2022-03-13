@@ -9,6 +9,7 @@ service StudentsService {
   rpc GetStudents (GetStudentsRequest) returns (GetStudentsResponse) {}
   rpc CreateStudent (CreateStudentRequest) returns (CreateStudentResponse) {}
   rpc GetStudentById (GetStudentByIdRequest) returns (GetStudentByIdResponse) {}
+  rpc GetStudentByIdWithSubjects (GetStudentByIdRequest) returns (GetStudentByIdWithSubjectsResponse) {}
   rpc UpdateStudentById (UpdateStudentByIdRequest) returns (UpdateStudentByIdResponse) {}
   rpc DeleteStudentById (DeleteStudentByIdRequest) returns (DeleteStudentByIdResponse) {}
 }
@@ -24,6 +25,7 @@ message Student {
 
 message GetStudentsRequest {
 }
+
 message GetStudentsResponse {
   repeated Student students = 1;
 }
@@ -39,6 +41,7 @@ message CreateStudentRequest {
   string first_name = 1;
   string last_name = 2;
 }
+
 message CreateStudentResponse {
   int64 id = 1;
 }
@@ -48,11 +51,28 @@ message UpdateStudentByIdRequest {
   string first_name = 2;
   string last_name = 3;
 }
+
 message UpdateStudentByIdResponse {
 }
 
 message DeleteStudentByIdRequest {
   int64 id = 1;
 }
+
 message DeleteStudentByIdResponse {
+}
+
+message GetStudentByIdWithSubjectsResponse {
+  Student student = 1;
+  repeated StudentSubject subjects = 2;
+}
+
+message StudentSubject {
+  int64 id = 1;
+  int64 id_subject = 2;
+  float frequency = 3;
+  string status = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  string name = 7;
 }

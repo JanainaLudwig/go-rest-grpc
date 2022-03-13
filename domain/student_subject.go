@@ -12,10 +12,10 @@ type StudentSubject struct {
 	IdSubject int        `json:"id_subject,omitempty"`
 	Frequency float64    `json:"frequency,omitempty"`
 	Status    string     `json:"status,omitempty"`
-	modelDate
+	ModelDate
 }
 
 type StudentSubjectWithSubject struct {
 	StudentSubject
-	Subject Subject `json:"subject,omitempty"`
+	Name string `json:"name,omitempty"`
 }

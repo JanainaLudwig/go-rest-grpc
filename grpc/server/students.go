@@ -8,7 +8,7 @@ import (
 	"grpc-rest/grpc"
 	"grpc-rest/grpc/proto"
 	"grpc-rest/models/student"
-	"log"
+	"grpc-rest/models/student_subject"
 )
 
 type StudentsService struct {
@@ -22,8 +22,7 @@ func NewStudentsServiceController() *StudentsService {
 func (s *StudentsService) GetStudents(ctx context.Context, req *proto.GetStudentsRequest) (*proto.GetStudentsResponse, error) {
 	students, err := student.FetchAll(ctx)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, core.GrpcError(err)
 	}
 
 	resp := &proto.GetStudentsResponse{}
@@ -36,13 +35,13 @@ func (s *StudentsService) GetStudents(ctx context.Context, req *proto.GetStudent
 
 func (s *StudentsService) CreateStudent(ctx context.Context, req *proto.CreateStudentRequest) (*proto.CreateStudentResponse, error) {
 	std := domain.Student{
-		FirstName:  req.FirstName,
-		LastName:   req.LastName,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
 	}
 
 	idInserted, err := student.Create(ctx, &std)
 	if err != nil {
-		return nil, err
+		return nil, core.GrpcError(err)
 	}
 
 	return &proto.CreateStudentResponse{
@@ -68,7 +67,7 @@ func (s *StudentsService) UpdateStudentById(ctx context.Context, req *proto.Upda
 		LastName:  req.LastName,
 	})
 	if err != nil {
-		return nil, err
+		return nil, core.GrpcError(err)
 	}
 
 	return &proto.UpdateStudentByIdResponse{}, nil
@@ -78,10 +77,33 @@ func (s *StudentsService) DeleteStudentById(ctx context.Context, req *proto.Dele
 	err := student.Delete(ctx, int(req.Id))
 
 	if err != nil {
-		return nil, err
+		return nil, core.GrpcError(err)
 	}
 
 	return &proto.DeleteStudentByIdResponse{}, nil
+}
+
+func (s *StudentsService) GetStudentByIdWithSubjects(ctx context.Context, req *proto.GetStudentByIdRequest) (*proto.GetStudentByIdWithSubjectsResponse, error) {
+	id := int(req.Id)
+	std, err := student.FetchById(ctx, id)
+	if err != nil {
+		return nil, core.GrpcError(err)
+	}
+
+	subjects, err := student_subject.FetchByStudentSubjectId(ctx, id)
+	if err != nil {
+		return nil, core.GrpcError(err)
+	}
+
+	var protoSubjects []*proto.StudentSubject
+	for _, subject := range subjects {
+		protoSubjects = append(protoSubjects, s.studentSubjectToProto(&subject))
+	}
+
+	return &proto.GetStudentByIdWithSubjectsResponse{
+		Student:  s.studentToProto(std),
+		Subjects: protoSubjects,
+	}, nil
 }
 
 func (s *StudentsService) studentToProto(std *domain.Student) *proto.Student {
@@ -95,13 +117,27 @@ func (s *StudentsService) studentToProto(std *domain.Student) *proto.Student {
 	}
 }
 
+func (s *StudentsService) studentSubjectToProto(std *domain.StudentSubjectWithSubject) *proto.StudentSubject {
+	return &proto.StudentSubject{
+		Id:        int64(std.Id),
+		IdSubject: int64(std.IdSubject),
+		Frequency: float32(std.Frequency),
+		Status:    std.Status,
+		CreatedAt: timestamppb.New(*std.CreatedAt),
+		UpdatedAt: timestamppb.New(*std.UpdatedAt),
+		Name:      std.Name,
+	}
+}
+
 func (s *StudentsService) protoToStudent(std *proto.Student) *domain.Student {
 	return &domain.Student{
-		Id: int(std.Id),
+		Id:         int(std.Id),
 		FirstName:  std.FirstName,
 		LastName:   std.LastName,
 		Identifier: std.Identifier,
-		CreatedAt:  grpc.PrototimeToTime(std.CreatedAt),
-		UpdatedAt:  grpc.PrototimeToTime(std.UpdatedAt),
+		ModelDate: domain.ModelDate{
+			CreatedAt: grpc.PrototimeToTime(std.CreatedAt),
+			UpdatedAt: grpc.PrototimeToTime(std.UpdatedAt),
+		},
 	}
 }

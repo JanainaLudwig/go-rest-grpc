@@ -24,8 +24,8 @@ func main() {
 	client := proto.NewStudentsServiceClient(conn)
 
 	listAll(ctx, client)
-	id := createSample(ctx, client)
-	getById(ctx, client, id)
+	createSample(ctx, client)
+	getById(ctx, client, 1)
 	getById(ctx, client, 1550)
 }
 
@@ -54,7 +54,7 @@ func createSample(ctx context.Context, client proto.StudentsServiceClient) int {
 
 
 func getById(ctx context.Context, client proto.StudentsServiceClient, id int) {
-	student, err := client.GetStudentById(ctx, &proto.GetStudentByIdRequest{Id: int64(id)})
+	student, err := client.GetStudentByIdWithSubjects(ctx, &proto.GetStudentByIdRequest{Id: int64(id)})
 	if err != nil {
 		log.Fatal(err)
 	}
