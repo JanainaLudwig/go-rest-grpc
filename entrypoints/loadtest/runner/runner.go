@@ -27,20 +27,14 @@ func (r *Runner) AddLoad(load Load) {
 }
 
 func (r *Runner) Run() {
+	wg := sync.WaitGroup{}
 	for i, load := range r.loads {
-		log.Printf("Running load %v - timer %v", i, load.Duration)
-		//stop := make(chan bool, 1)
-		//go func() {
-		//	defer func() {
-		//		log.Println("release")
-		//		stop <- true
-		//	}()
-		ticker := time.NewTicker(1 * time.Second)
-		timer := time.NewTimer(load.Duration)
-		wg := sync.WaitGroup{}
 		wg.Add(1)
-
-		go func() {
+		loadSync := make(chan bool)
+		go func(load Load, loadIndex int) {
+			log.Printf("Running load %v - timer %v", loadIndex, load.Duration)
+			ticker := time.NewTicker(1 * time.Second)
+			timer := time.NewTimer(load.Duration)
 			defer func() {
 				wg.Done()
 			}()
@@ -56,17 +50,18 @@ func (r *Runner) Run() {
 						}
 					}()
 				case <- timer.C:
-					log.Printf("stopping load")
+					log.Printf("stopping load %v", loadIndex)
+					loadSync <- true
 					return
 				}
 			}
 
-		}()
+		}(load, i)
 
-		//}()
-
-		wg.Wait()
-		//<-stop
+		<- loadSync
 		log.Println("finished")
 	}
+
+	wg.Wait()
+	log.Println("Load test finished")
 }

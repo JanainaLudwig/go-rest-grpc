@@ -13,16 +13,16 @@ func main() {
 
 	loads := []runner.Load{
 		{
-			CallsPerSecond: 500,
-			Duration:       3 * time.Second,
+			CallsPerSecond: 50,
+			Duration:       10 * time.Second,
 		},
 		{
-			CallsPerSecond: 700,
-			Duration:       3 * time.Second,
+			CallsPerSecond: 100,
+			Duration:       10 * time.Second,
 		},
 		{
-			CallsPerSecond: 800,
-			Duration:       3 * time.Second,
+			CallsPerSecond: 300,
+			Duration:       20 * time.Second,
 		},
 	}
 
