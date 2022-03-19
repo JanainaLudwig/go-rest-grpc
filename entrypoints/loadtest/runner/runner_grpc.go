@@ -24,6 +24,7 @@ func NewRunnerGrpc(host string, loads ...Load) *Runner {
 	return &Runner{
 		ctx:   ctx,
 		loads: loads,
+		code: "grpc",
 		client: &Grpc{
 			client: client,
 			ctx: ctx,
@@ -31,9 +32,8 @@ func NewRunnerGrpc(host string, loads ...Load) *Runner {
 	}
 }
 
-func (r *Grpc) TestFunc()  {
+func (r *Grpc) TestFunc() error {
 	_, err := r.client.GetStudents(r.ctx, &proto.GetStudentsRequest{})
-	if err != nil {
-		log.Println(err)
-	}
+
+	return err
 }

@@ -13,17 +13,17 @@ func main() {
 
 	loads := []runner.Load{
 		{
-			CallsPerSecond: 50,
-			Duration:       10 * time.Second,
+			CallsPerSecond: 2,
+			Duration:       3 * time.Second,
 		},
 		{
-			CallsPerSecond: 100,
-			Duration:       10 * time.Second,
+			CallsPerSecond: 3,
+			Duration:       3 * time.Second,
 		},
-		{
-			CallsPerSecond: 300,
-			Duration:       20 * time.Second,
-		},
+		//{
+		//	CallsPerSecond: 300,
+		//	Duration:       20 * time.Second,
+		//},
 	}
 
 	var test *runner.Runner
@@ -36,8 +36,8 @@ func main() {
 		log.Fatalln("Please provide a valid test method")
 	}
 
-	test.Run()
+	reportSummary := test.Run()
 
-	for {
-	}
+	test.ReportToCsv()
+	log.Println(reportSummary)
 }

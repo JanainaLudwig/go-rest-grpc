@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -20,6 +21,7 @@ func NewRunnerRest(host string, loads ...Load) *Runner {
 	return &Runner{
 		ctx:   ctx,
 		loads: loads,
+		code: "rest",
 		client: &Rest{
 			client: client,
 			ctx: ctx,
@@ -28,16 +30,19 @@ func NewRunnerRest(host string, loads ...Load) *Runner {
 	}
 }
 
-func (r *Rest) TestFunc()  {
+func (r *Rest) TestFunc() error {
 	req, err := http.NewRequestWithContext(r.ctx, http.MethodGet, r.host, nil)
 	if err != nil {
 		log.Println(err)
-		return
+		return nil
 	}
 
 	res, err := r.client.Do(req)
 	if err != nil {
-		log.Println(err)
+		return err
 	}
+	ioutil.ReadAll(res.Body)
 	res.Body.Close()
+
+	return err
 }
