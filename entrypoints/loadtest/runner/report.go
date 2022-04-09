@@ -69,7 +69,7 @@ func (r *Runner) ReportToCsv() {
 	content = append(content, []string{"Response time", "Success", "Error"})
 
 	for _, report := range r.report {
-		errMsg := ""
+		errMsg := "-"
 		if report.error != nil {
 			errMsg = report.error.Error()
 		}
