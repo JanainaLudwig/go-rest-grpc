@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	runner "grpc-rest/entrypoints/loadtest/runner"
+	"grpc-rest/entrypoints/loadtest/runner"
 	"log"
 	"time"
 )
@@ -12,20 +12,19 @@ func main() {
 	flag.Parse()
 
 	loads := []runner.Load{
-		{
-			CallsPerSecond: 200,
-			Duration:       3 * time.Second,
-		},
-		{
-			CallsPerSecond: 300,
-			Duration:       5 * time.Second,
-		},
-		//{
-		//	CallsPerSecond: 300,
-		//	Duration:       20 * time.Second,
-		//},
+		{CallsPerSecond: 10, Duration: 2 * time.Second},
+		{CallsPerSecond: 20, Duration: 2 * time.Second},
 	}
 
+	testRunner := getTestRunner(method, loads)
+
+	report := testRunner.Run()
+	testRunner.ReportToCsv()
+
+	log.Println(report)
+}
+
+func getTestRunner(method *string, loads []runner.Load) *runner.Runner {
 	var test *runner.Runner
 	switch *method {
 	case "rest":
@@ -36,8 +35,5 @@ func main() {
 		log.Fatalln("Please provide a valid test method")
 	}
 
-	reportSummary := test.Run()
-
-	test.ReportToCsv()
-	log.Println(reportSummary)
+	return test
 }

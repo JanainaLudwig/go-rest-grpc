@@ -38,7 +38,7 @@ func (r *Runner) Run() ReportSummary {
 		wg.Add(1)
 		loadSync := make(chan bool)
 		go func(load Load, loadIndex int) {
-			log.Printf("Running load %v - timer %v", loadIndex, load.Duration)
+			//log.Printf("Running load %v - duration %v", loadIndex + 1, load.Duration)
 			ticker := time.NewTicker(1 * time.Second)
 			timer := time.NewTimer(load.Duration)
 			defer func() {
@@ -49,14 +49,14 @@ func (r *Runner) Run() ReportSummary {
 				case <-ticker.C:
 					wg.Add(load.CallsPerSecond)
 					go func() {
-						log.Printf("running load with %v calls", load.CallsPerSecond)
+						log.Printf("Running load with %v calls...", load.CallsPerSecond)
 						for call := 0; call < load.CallsPerSecond; call++ {
 							r.runCall(responsesChan)
 							wg.Done()
 						}
 					}()
 				case <- timer.C:
-					log.Printf("stopping load %v", loadIndex)
+					//log.Printf("Stopping load %v", loadIndex + 1)
 					loadSync <- true
 					return
 				}
@@ -65,7 +65,7 @@ func (r *Runner) Run() ReportSummary {
 		}(load, i)
 
 		<- loadSync
-		log.Println("finished")
+		//log.Println("finished")
 	}
 
 	reportControl := make(chan bool)

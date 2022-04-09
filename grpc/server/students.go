@@ -7,8 +7,8 @@ import (
 	"grpc-rest/domain"
 	"grpc-rest/grpc"
 	"grpc-rest/grpc/proto"
-	"grpc-rest/models/student"
-	"grpc-rest/models/student_subject"
+	"grpc-rest/repositories/student"
+	"grpc-rest/repositories/student_subject"
 )
 
 type StudentsService struct {

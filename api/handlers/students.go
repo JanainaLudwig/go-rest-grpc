@@ -3,8 +3,8 @@ package handlers
 import (
 	"github.com/julienschmidt/httprouter"
 	"grpc-rest/domain"
-	"grpc-rest/models/student"
-	"grpc-rest/models/student_subject"
+	"grpc-rest/repositories/student"
+	"grpc-rest/repositories/student_subject"
 	"net/http"
 	"strconv"
 )

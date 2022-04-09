@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/bxcodec/faker/v3"
 	"grpc-rest/domain"
-	"grpc-rest/models/student"
-	"grpc-rest/models/student_subject"
-	"grpc-rest/models/subject"
+	"grpc-rest/repositories/student"
+	"grpc-rest/repositories/student_subject"
+	"grpc-rest/repositories/subject"
 	"sync"
 )
 
