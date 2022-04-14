@@ -9,6 +9,7 @@ import (
 
 type RequestReport struct {
 	responseTime time.Duration
+	endTime time.Time
 	success bool
 	error error
 }
@@ -55,6 +56,7 @@ func (r *Runner) ReportToCsv() {
 		fmt.Sprint(summary.NumberOfRequests),
 		fmt.Sprint(summary.MediumResponseTime),
 		fmt.Sprint(summary.ErrorPercentage),
+		fmt.Sprint(summary.ErrorPercentage),
 	})
 
 	content = append(content, []string{"Type", "Requests per second", "Duration"})
@@ -63,10 +65,11 @@ func (r *Runner) ReportToCsv() {
 			r.code,
 			fmt.Sprint(load.CallsPerSecond),
 			fmt.Sprint(load.Duration),
+			fmt.Sprint(load),
 		})
 	}
 
-	content = append(content, []string{"Response time", "Success", "Error"})
+	content = append(content, []string{"Response time", "Success", "Error", "End time"})
 
 	for _, report := range r.report {
 		errMsg := "-"
@@ -78,6 +81,7 @@ func (r *Runner) ReportToCsv() {
 			fmt.Sprint(report.responseTime),
 			fmt.Sprint(report.success),
 			errMsg,
+			fmt.Sprint(report.endTime.Format(time.StampNano)),
 		})
 	}
 

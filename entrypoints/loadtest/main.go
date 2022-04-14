@@ -12,8 +12,8 @@ func main() {
 	flag.Parse()
 
 	loads := []runner.Load{
-		{CallsPerSecond: 10, Duration: 2 * time.Second},
-		{CallsPerSecond: 20, Duration: 2 * time.Second},
+		{CallsPerSecond: 20, Duration: 5 * time.Second},
+		//{CallsPerSecond: 200, Duration: 2 * time.Second},
 	}
 
 	testRunner := getTestRunner(method, loads)

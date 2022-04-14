@@ -29,34 +29,35 @@ func (r *Runner) AddLoad(load Load) {
 }
 
 func (r *Runner) Run() ReportSummary {
-	wg := sync.WaitGroup{}
+	runnerGroup := sync.WaitGroup{}
 
 	totalRequests := r.getTotalRequestsCalls()
 	responsesChan := make(chan RequestReport, totalRequests)
 
 	for i, load := range r.loads {
-		wg.Add(1)
+		runnerGroup.Add(1)
 		loadSync := make(chan bool)
 		go func(load Load, loadIndex int) {
 			//log.Printf("Running load %v - duration %v", loadIndex + 1, load.Duration)
 			ticker := time.NewTicker(1 * time.Second)
 			timer := time.NewTimer(load.Duration)
 			defer func() {
-				wg.Done()
+				runnerGroup.Done()
 			}()
 			for {
 				select {
 				case <-ticker.C:
-					wg.Add(load.CallsPerSecond)
+					runnerGroup.Add(load.CallsPerSecond)
 					go func() {
-						log.Printf("Running load with %v calls...", load.CallsPerSecond)
+						log.Printf("Running load with %v requests...", load.CallsPerSecond)
 						for call := 0; call < load.CallsPerSecond; call++ {
-							r.runCall(responsesChan)
-							wg.Done()
+							go func() {
+								defer runnerGroup.Done()
+								r.runCall(responsesChan)
+							}()
 						}
 					}()
 				case <- timer.C:
-					//log.Printf("Stopping load %v", loadIndex + 1)
 					loadSync <- true
 					return
 				}
@@ -65,7 +66,6 @@ func (r *Runner) Run() ReportSummary {
 		}(load, i)
 
 		<- loadSync
-		//log.Println("finished")
 	}
 
 	reportControl := make(chan bool)
@@ -76,7 +76,7 @@ func (r *Runner) Run() ReportSummary {
 		reportControl <- true
 	}()
 
-	wg.Wait()
+	runnerGroup.Wait()
 	close(responsesChan)
 	<-reportControl
 	log.Println("Load test finished")
@@ -87,10 +87,12 @@ func (r *Runner) Run() ReportSummary {
 func (r *Runner) runCall(responses chan<- RequestReport) {
 	now := time.Now()
 	err := r.client.TestFunc()
+	endTime := time.Now()
 	responseTime := time.Since(now)
 
 	responses <- RequestReport{
 		responseTime: responseTime,
+		endTime:      endTime,
 		success:      err == nil,
 		error:        err,
 	}
