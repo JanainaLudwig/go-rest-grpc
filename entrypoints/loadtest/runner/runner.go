@@ -22,6 +22,8 @@ type Runner struct {
 	client LoadTestClient
 	report []RequestReport
 	code string
+	startTime time.Time
+	endTime time.Time
 }
 
 func (r *Runner) AddLoad(load Load) {
@@ -34,6 +36,7 @@ func (r *Runner) Run() ReportSummary {
 	totalRequests := r.getTotalRequestsCalls()
 	responsesChan := make(chan RequestReport, totalRequests)
 
+	r.startTime = time.Now()
 	for i, load := range r.loads {
 		runnerGroup.Add(1)
 		loadSync := make(chan bool)
@@ -86,6 +89,7 @@ func (r *Runner) Run() ReportSummary {
 	close(responsesChan)
 	<-reportControl
 	log.Println("Load test finished")
+	r.endTime = time.Now()
 
 	return r.GetReportSummary()
 }

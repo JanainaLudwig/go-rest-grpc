@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"time"
+	"log"
 )
 
 type RequestReport struct {
@@ -15,18 +16,23 @@ type RequestReport struct {
 }
 type ReportSummary struct {
 	MediumResponseTime time.Duration
-	NumberOfRequests int
-	ErrorPercentage float64
+	NumberOfRequests   int
+	ErrorPercentage    float64
+	Throughput         float64
+	StartTime time.Time
+	EndTime time.Time
 }
 
 func (r ReportSummary) String() string {
-	return fmt.Sprintf("Total requests: %v  |  Medium response time: %v  |  Error Percentage: %v%%",
-		r.NumberOfRequests, r.MediumResponseTime, r.ErrorPercentage)
+	return fmt.Sprintf("Total requests: %v  |  Medium response time: %v  |  Error Percentage: %v%%  |  Throughput: %v",
+		r.NumberOfRequests, r.MediumResponseTime, r.ErrorPercentage, r.Throughput)
 }
 
 func (r *Runner) GetReportSummary() ReportSummary {
 	report := ReportSummary{
 		NumberOfRequests:   len(r.report),
+		StartTime: r.startTime,
+		EndTime: r.endTime,
 	}
 
 	qtdErrs := 0
@@ -45,7 +51,9 @@ func (r *Runner) GetReportSummary() ReportSummary {
 
 	report.ErrorPercentage = float64(qtdErrs * 100 / report.NumberOfRequests)
  	report.MediumResponseTime = time.Duration(sumResponseTime.Nanoseconds() / int64(report.NumberOfRequests))
+ 	report.Throughput = float64(report.NumberOfRequests) / (report.EndTime.Sub(report.StartTime).Seconds())
 
+	log.Println(report.EndTime.Sub(report.StartTime).Seconds())
 	return report
 }
 
@@ -55,13 +63,13 @@ func (r *Runner) ReportToCsv() {
 		"Number of requests",
 		"Medium response time",
 		"Error percentage",
-		"",
+		"Throughput",
 	}}
 	content = append(content, []string{
 		fmt.Sprint(summary.NumberOfRequests),
 		fmt.Sprint(summary.MediumResponseTime),
 		fmt.Sprint(summary.ErrorPercentage),
-		"",
+		fmt.Sprint(summary.Throughput),
 	})
 
 	content = append(content, []string{"Type", "Requests per second", "Duration", ""})

@@ -12,3 +12,12 @@ grpc-dev:
 
 server:
 	docker-compose -f docker/docker-compose.yaml --profile server up
+
+server-build:
+	docker-compose -f docker/docker-compose.yaml --profile server build
+
+test-rest:
+	go run entrypoints/loadtest/main.go --type rest > report-rest.csv
+	
+test-grpc:
+	go run entrypoints/loadtest/main.go --type grpc > report-grpc.csv
