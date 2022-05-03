@@ -34,7 +34,7 @@ func (r *Rest) TestFunc() error {
 	req, err := http.NewRequestWithContext(r.ctx, http.MethodGet, r.host, nil)
 	if err != nil {
 		log.Println(err)
-		return nil
+		return err
 	}
 
 	res, err := r.client.Do(req)

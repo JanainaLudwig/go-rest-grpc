@@ -8,9 +8,11 @@ import (
 )
 
 func FetchAll(ctx context.Context) ([]domain.Student, error) {
-	r := Repository{db: core.DB}
+	//r := Repository{db: core.DB}
+	//
+	//return r.FetchAll(ctx)
 
-	return r.FetchAll(ctx)
+	return fakeStudents(), nil
 }
 
 func FetchById(ctx context.Context, id int) (*domain.Student, error) {

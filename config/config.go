@@ -18,6 +18,8 @@ type AppConfig struct {
 	DbConfig *database.Config
 	NewRelicLicence string
 	NewRelicApp *newrelic.Application
+	ServerGrpc string
+	ServerRest string
 }
 
 func (a *AppConfig) SetNewrelicApp(app *newrelic.Application) {
@@ -45,6 +47,8 @@ func LoadEnv(path string) {
 	}
 
 	App.NewRelicLicence = loadString("NEW_RELIC_LICENCE", nil)
+	App.ServerGrpc = loadString("SERVER_GRPC", nil)
+	App.ServerRest = loadString("SERVER_REST", nil)
 }
 
 func RootPath() string {

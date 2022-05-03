@@ -11,7 +11,7 @@ services:
       - prod
     depends_on:
       - "mysql"
-      - "redis"
+#      - "redis"
     environment:
       - MYSQL_HOST=mysql_api
     profiles: ["server"]
@@ -26,7 +26,7 @@ services:
         - prod
       depends_on:
         - "mysql"
-        - "redis"
+#        - "redis"
       environment:
         - MYSQL_HOST=mysql_api
       profiles: ["server"]
@@ -57,13 +57,27 @@ services:
       - ../grpc:/go/grpc
     profiles: []
 
-  redis:
-    image: redis
-    container_name: redis
-    hostname: redis_api
-    networks:
-      - prod
-    profiles: ["server", "db"]
+#  loadtest:
+#    build:
+#      dockerfile: ./docker/loadtest/Dockerfile
+#      context: ../
+#    container_name: grpc-dev
+#    volumes:
+#      - ../config/:/source/config/
+#    profiles: []
+#    networks:
+#      - prod
+#    environment:
+#      - SERVER_GRPC=grpc-server:9000
+#      - SERVER_REST=http://api:8080
+
+#  redis:
+#    image: redis
+#    container_name: redis
+#    hostname: redis_api
+#    networks:
+#      - prod
+#    profiles: ["server", "db"]
 
   mysql:
     image: mysql

@@ -9,3 +9,6 @@ migrate-down:
 
 grpc-dev:
 	docker-compose -f docker/docker-compose.yaml run grpc-dev
+
+server:
+	docker-compose -f docker/docker-compose.yaml --profile server up

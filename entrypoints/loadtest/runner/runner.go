@@ -49,13 +49,19 @@ func (r *Runner) Run() ReportSummary {
 				case <-ticker.C:
 					runnerGroup.Add(load.CallsPerSecond)
 					go func() {
+						maxGoroutines := make(chan bool, 300)
 						log.Printf("Running load with %v requests...", load.CallsPerSecond)
 						for call := 0; call < load.CallsPerSecond; call++ {
+							maxGoroutines <- true
 							go func() {
-								defer runnerGroup.Done()
+								defer func() {
+									<- maxGoroutines
+									runnerGroup.Done()
+								}()
 								r.runCall(responsesChan)
 							}()
 						}
+						log.Printf("FINISHED load with %v requests...", load.CallsPerSecond)
 					}()
 				case <- timer.C:
 					loadSync <- true

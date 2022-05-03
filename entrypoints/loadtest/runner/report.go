@@ -39,6 +39,10 @@ func (r *Runner) GetReportSummary() ReportSummary {
 		sumResponseTime += requestReport.responseTime
 	}
 
+	if report.NumberOfRequests == 0 {
+		return report
+	}
+
 	report.ErrorPercentage = float64(qtdErrs * 100 / report.NumberOfRequests)
  	report.MediumResponseTime = time.Duration(sumResponseTime.Nanoseconds() / int64(report.NumberOfRequests))
 
@@ -51,21 +55,22 @@ func (r *Runner) ReportToCsv() {
 		"Number of requests",
 		"Medium response time",
 		"Error percentage",
+		"",
 	}}
 	content = append(content, []string{
 		fmt.Sprint(summary.NumberOfRequests),
 		fmt.Sprint(summary.MediumResponseTime),
 		fmt.Sprint(summary.ErrorPercentage),
-		fmt.Sprint(summary.ErrorPercentage),
+		"",
 	})
 
-	content = append(content, []string{"Type", "Requests per second", "Duration"})
+	content = append(content, []string{"Type", "Requests per second", "Duration", ""})
 	for _, load := range r.loads {
 		content = append(content, []string{
 			r.code,
 			fmt.Sprint(load.CallsPerSecond),
 			fmt.Sprint(load.Duration),
-			fmt.Sprint(load),
+			"",
 		})
 	}
 
