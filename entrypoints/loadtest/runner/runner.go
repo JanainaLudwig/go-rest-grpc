@@ -5,6 +5,7 @@ import (
 	"log"
 	"sync"
 	"time"
+	"github.com/schollz/progressbar/v3"
 )
 
 type Load struct {
@@ -30,12 +31,16 @@ func (r *Runner) AddLoad(load Load) {
 	r.loads = append(r.loads, load)
 }
 
-func (r *Runner) Run() ReportSummary {
+func (r *Runner) Run(maxWorkers int) ReportSummary {
+	if maxWorkers == 0 {
+		maxWorkers = 300
+	}
 	runnerGroup := sync.WaitGroup{}
 
 	totalRequests := r.getTotalRequestsCalls()
 	responsesChan := make(chan RequestReport, totalRequests)
 
+	bar := progressbar.Default(int64(totalRequests))
 	r.startTime = time.Now()
 	for i, load := range r.loads {
 		runnerGroup.Add(1)
@@ -52,19 +57,24 @@ func (r *Runner) Run() ReportSummary {
 				case <-ticker.C:
 					runnerGroup.Add(load.CallsPerSecond)
 					go func() {
-						maxGoroutines := make(chan bool, 300)
-						log.Printf("Running load with %v requests...", load.CallsPerSecond)
+						maxGoroutines := make(chan bool, maxWorkers)
+
+						//log.Printf("Running load with %v requests...", load.CallsPerSecond)
 						for call := 0; call < load.CallsPerSecond; call++ {
 							maxGoroutines <- true
 							go func() {
 								defer func() {
+									err := bar.Add(1)
+									if err != nil {
+										log.Println(err)
+									}
 									<- maxGoroutines
 									runnerGroup.Done()
 								}()
 								r.runCall(responsesChan)
 							}()
 						}
-						log.Printf("FINISHED load with %v requests...", load.CallsPerSecond)
+						//log.Printf("FINISHED load with %v requests...", load.CallsPerSecond)
 					}()
 				case <- timer.C:
 					loadSync <- true

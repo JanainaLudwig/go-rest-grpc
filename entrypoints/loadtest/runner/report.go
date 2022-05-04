@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"time"
-	"log"
 )
 
 type RequestReport struct {
@@ -53,7 +52,6 @@ func (r *Runner) GetReportSummary() ReportSummary {
  	report.MediumResponseTime = time.Duration(sumResponseTime.Nanoseconds() / int64(report.NumberOfRequests))
  	report.Throughput = float64(report.NumberOfRequests) / (report.EndTime.Sub(report.StartTime).Seconds())
 
-	log.Println(report.EndTime.Sub(report.StartTime).Seconds())
 	return report
 }
 

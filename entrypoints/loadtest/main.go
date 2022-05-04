@@ -25,7 +25,7 @@ func main() {
 
 	testRunner := getTestRunner(method, loads)
 
-	report := testRunner.Run()
+	report := testRunner.Run(30)
 	testRunner.ReportToCsv()
 
 	log.Println(report)

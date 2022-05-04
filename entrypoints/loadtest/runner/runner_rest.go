@@ -2,7 +2,8 @@ package runner
 
 import (
 	"context"
-	"io/ioutil"
+	"encoding/json"
+	"grpc-rest/domain"
 	"log"
 	"net/http"
 )
@@ -41,8 +42,14 @@ func (r *Rest) TestFunc() error {
 	if err != nil {
 		return err
 	}
-	ioutil.ReadAll(res.Body)
-	res.Body.Close()
 
-	return err
+	defer res.Body.Close()
+
+	var students []domain.Student
+	err = json.NewDecoder(res.Body).Decode(&students)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -11,12 +11,16 @@ import (
 
 func RunMigrations() {
 	m := getMigrationClient("migrations")
+	if m == nil {
+		log.Println("failed running migrations")
+		return
+	}
 	err := m.Up()
 	if err != nil {
 		if err == migrate.ErrNoChange {
 			return
 		}
-		log.Fatalln(err)
+		log.Println(err)
 		return
 	}
 }
@@ -28,7 +32,7 @@ func DownMigrations() {
 		if err == migrate.ErrNoChange {
 			return
 		}
-		log.Fatalln(err)
+		log.Println(err)
 		return
 	}
 }
@@ -39,14 +43,15 @@ func getMigrationClient(path string) *migrate.Migrate {
 	driver, err := mysql.WithInstance(db, &mysql.Config{
 	})
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
+		return nil
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
 		"file:///" + RootPath() + "/database/" + path,
 		"postgres", driver)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 
 	return m
