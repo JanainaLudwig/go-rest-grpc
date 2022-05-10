@@ -6,10 +6,10 @@ import (
 )
 
 func StartApp(runMigration bool) {
-	StartDb()
-	if runMigration {
-		RunMigrations()
-	}
+	//StartDb()
+	//if runMigration {
+	//	RunMigrations()
+	//}
 }
 
 func RootPath() string {

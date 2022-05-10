@@ -22,11 +22,12 @@ func FetchById(ctx context.Context, id int) (*domain.Student, error) {
 }
 
 func Create(ctx context.Context, std *domain.Student) (int, error) {
-	r := Repository{db: core.DB}
+	//r := Repository{db: core.DB}
 
 	std.Identifier = uuid.New().String()
 
-	return r.Insert(ctx, std)
+	return 1, nil
+	//return r.Insert(ctx, std)
 }
 
 func Update(ctx context.Context, std *domain.Student) error {

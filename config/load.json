@@ -1,10 +1,10 @@
 [
   {
     "calls": 10000,
-    "seconds": 4
+    "seconds": 3
   },
   {
-    "calls": 30000,
-    "seconds": 4
+    "calls": 12000,
+    "seconds": 3
   }
 ]

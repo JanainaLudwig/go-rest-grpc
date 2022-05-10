@@ -14,6 +14,7 @@ func main() {
 	config.LoadEnv(config.RootPath() + "/config/.env")
 
 	method := flag.String("type", "", "Specify test method: rest or grpc")
+	methodType := flag.String("method", "get", "Specify service method: get or post")
 	flag.Parse()
 
 	loads := getLoadConfig()
@@ -23,9 +24,9 @@ func main() {
 	//	{CallsPerSecond: 3, Duration: 1 * time.Second},
 	//}
 
-	testRunner := getTestRunner(method, loads)
+	testRunner := getTestRunner(method, loads, *methodType)
 
-	report := testRunner.Run(30)
+	report := testRunner.Run(100)
 	testRunner.ReportToCsv()
 
 	log.Println(report)
@@ -58,15 +59,13 @@ func getLoadConfig() []runner.Load {
 	return loadRun
 }
 
-func getTestRunner(method *string, loads []runner.Load) *runner.Runner {
+func getTestRunner(method *string, loads []runner.Load, methodType string) *runner.Runner {
 	var test *runner.Runner
 	switch *method {
 	case "rest":
-		test = runner.NewRunnerRest(config.App.ServerRest + "/students", loads...)
-		//test = runner.NewRunnerRest("http://localhost:8080/", loads...)
+		test = runner.NewRunnerRest(config.App.ServerRest + "/students", methodType, loads...)
 	case "grpc":
-		test = runner.NewRunnerGrpc(config.App.ServerGrpc, loads...)
-		//test = runner.NewRunnerGrpc("localhost:9000", loads...)
+		test = runner.NewRunnerGrpc(config.App.ServerGrpc, methodType, loads...)
 	default:
 		log.Fatalln("Please provide a valid test method")
 	}
