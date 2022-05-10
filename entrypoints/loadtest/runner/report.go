@@ -62,15 +62,17 @@ func (r *Runner) ReportToCsv() {
 		"Medium response time",
 		"Error percentage",
 		"Throughput",
+		"Duration",
 	}}
 	content = append(content, []string{
 		fmt.Sprint(summary.NumberOfRequests),
 		fmt.Sprint(summary.MediumResponseTime),
 		fmt.Sprint(summary.ErrorPercentage),
 		fmt.Sprint(summary.Throughput),
+		fmt.Sprintf("%v", summary.EndTime.Sub(summary.StartTime).Seconds()),
 	})
 
-	content = append(content, []string{"Type", "Requests per second", "Duration", ""})
+	content = append(content, []string{"Type", "Requests per second", "Duration", "", ""})
 	for _, load := range r.loads {
 		content = append(content, []string{
 			r.code,
@@ -80,7 +82,7 @@ func (r *Runner) ReportToCsv() {
 		})
 	}
 
-	content = append(content, []string{"Response time", "Success", "Error", "End time"})
+	content = append(content, []string{"Response time", "Success", "Error", "End time", ""})
 
 	for _, report := range r.report {
 		errMsg := "-"
