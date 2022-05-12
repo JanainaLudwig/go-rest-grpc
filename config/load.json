@@ -1,10 +1,94 @@
 [
   {
-    "calls": 10000,
-    "seconds": 3
+    "calls": 100,
+    "seconds": 2
   },
   {
-    "calls": 12000,
-    "seconds": 3
-  }
+    "calls": 300,
+    "seconds": 2
+  },
+  {
+    "calls": 500,
+    "seconds": 2
+	},
+  {
+    "calls": 700,
+    "seconds": 2
+	},
+  {
+    "calls": 900,
+    "seconds": 2
+	},
+  {
+    "calls": 1100,
+    "seconds": 2
+	},
+  {
+    "calls": 1300,
+    "seconds": 2
+	},
+  {
+    "calls": 1500,
+    "seconds": 2
+	},
+  {
+    "calls": 1700,
+    "seconds": 2
+	},
+  {
+    "calls": 1900,
+    "seconds": 2
+	},
+  {
+    "calls": 2100,
+    "seconds": 2
+	},
+  {
+    "calls": 2300,
+    "seconds": 2
+	},
+  {
+    "calls": 2500,
+    "seconds": 2
+	},
+  {
+    "calls": 2700,
+    "seconds": 2
+	},
+  {
+    "calls": 2900,
+    "seconds": 2
+	},
+  {
+    "calls": 3100,
+    "seconds": 2
+	},
+  {
+    "calls": 3300,
+    "seconds": 2
+	},
+  {
+    "calls": 3500,
+    "seconds": 2
+	},
+  {
+    "calls": 3700,
+    "seconds": 2
+	},
+  {
+    "calls": 3900,
+    "seconds": 2
+	},
+  {
+    "calls": 4100,
+    "seconds": 2
+	},
+  {
+    "calls": 4300,
+    "seconds": 2
+	},
+  {
+    "calls": 4500,
+    "seconds": 2
+	}
 ]
