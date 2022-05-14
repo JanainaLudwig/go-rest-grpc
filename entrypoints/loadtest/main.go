@@ -26,14 +26,14 @@ func main() {
 
 	testRunner := getTestRunner(method, loads, *methodType)
 
-	report := testRunner.Run(100)
+	report := testRunner.Run(60)
 	testRunner.ReportToCsv()
 
 	log.Println(report)
 }
 
 type loadConfig struct {
-	Calls int `json:"calls"`
+	Calls   int `json:"calls"`
 	Seconds int `json:"seconds"`
 }
 
@@ -63,7 +63,7 @@ func getTestRunner(method *string, loads []runner.Load, methodType string) *runn
 	var test *runner.Runner
 	switch *method {
 	case "rest":
-		test = runner.NewRunnerRest(config.App.ServerRest + "/students", methodType, loads...)
+		test = runner.NewRunnerRest(config.App.ServerRest+"/students", methodType, loads...)
 	case "grpc":
 		test = runner.NewRunnerGrpc(config.App.ServerGrpc, methodType, loads...)
 	default:

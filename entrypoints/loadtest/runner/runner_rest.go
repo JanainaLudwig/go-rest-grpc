@@ -4,17 +4,18 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/bxcodec/faker/v3"
 	"grpc-rest/api/handlers"
 	"grpc-rest/domain"
 	"log"
 	"net/http"
+
+	"github.com/bxcodec/faker/v3"
 )
 
 type Rest struct {
-	ctx context.Context
-	client http.Client
-	host string
+	ctx      context.Context
+	client   http.Client
+	host     string
 	loadType string
 }
 
@@ -26,12 +27,12 @@ func NewRunnerRest(host string, loadType string, loads ...Load) *Runner {
 	return &Runner{
 		ctx:   ctx,
 		loads: loads,
-		code: "rest",
+		code:  "rest",
 		client: &Rest{
-			client: client,
+			client:   client,
 			loadType: loadType,
-			ctx: ctx,
-			host: host,
+			ctx:      ctx,
+			host:     host,
 		},
 	}
 }
