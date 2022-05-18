@@ -2,9 +2,11 @@ package student
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"grpc-rest/core"
 	"grpc-rest/domain"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 func FetchAll(ctx context.Context) ([]domain.Student, error) {
@@ -16,9 +18,20 @@ func FetchAll(ctx context.Context) ([]domain.Student, error) {
 }
 
 func FetchById(ctx context.Context, id int) (*domain.Student, error) {
-	r := Repository{db: core.DB}
+	//r := Repository{db: core.DB}
 
-	return r.FetchById(ctx, id)
+	//return r.FetchById(ctx, id)
+	timeNow := time.Now()
+	return &domain.Student{
+		Id:         1,
+		FirstName:  "John",
+		LastName:   "Doe",
+		Identifier: "34546468",
+		ModelDate:  domain.ModelDate{
+			CreatedAt: &timeNow,
+			UpdatedAt: &timeNow,
+		},
+	}, nil
 }
 
 func Create(ctx context.Context, std *domain.Student) (int, error) {

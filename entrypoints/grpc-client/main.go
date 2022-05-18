@@ -8,6 +8,7 @@ import (
 	"grpc-rest/core"
 	"grpc-rest/grpc/proto"
 	"log"
+	gproto "github.com/golang/protobuf/proto"
 )
 
 func main() {
@@ -15,18 +16,14 @@ func main() {
 	core.StartApp(true)
 	ctx := context.Background()
 
-	serverAddress := "localhost:" + config.App.GrpcPort
-	conn, e := grpc.DialContext(ctx, serverAddress, grpc.WithInsecure())
+	conn, e := grpc.DialContext(ctx, config.App.ServerGrpc, grpc.WithInsecure())
 	if e != nil {
 		log.Fatal(e)
 	}
 
 	client := proto.NewStudentsServiceClient(conn)
 
-	listAll(ctx, client)
-	createSample(ctx, client)
 	getById(ctx, client, 1)
-	getById(ctx, client, 1550)
 }
 
 func listAll(ctx context.Context, client proto.StudentsServiceClient) {
@@ -58,6 +55,9 @@ func getById(ctx context.Context, client proto.StudentsServiceClient, id int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	protoSizeBytes := gproto.Size(student)
+	log.Println("protoSizeBytes", protoSizeBytes)
 
 	log.Println(student)
 }

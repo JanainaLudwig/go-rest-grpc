@@ -19,22 +19,6 @@ func GetStudents(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	SendJsonResponse(w, all, http.StatusOK)
 }
 
-func GetStudentById(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	id, err := strconv.Atoi(p.ByName("id_student"))
-	if err != nil {
-		SendErrorResponse(w, err)
-		return
-	}
-
-	all, err := student.FetchById(r.Context(), id)
-	if err != nil {
-		SendErrorResponse(w, err)
-		return
-	}
-
-	SendJsonResponse(w, all, http.StatusOK)
-}
-
 func GetStudentSubjectsById(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	id, err := strconv.Atoi(p.ByName("id_student"))
 	if err != nil {
