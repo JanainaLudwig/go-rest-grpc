@@ -33,6 +33,13 @@ func listAll(ctx context.Context, client proto.StudentsServiceClient) {
 		return
 	}
 
+	log.Println("password")
+	log.Println("password")
+	log.Println("password")
+	log.Println("password")
+	log.Println("password")
+	log.Println("password")
+	log.Println("password")
 	data, err := json.MarshalIndent(students.GetStudents(), "", " ")
 	log.Println(string(data), err)
 }
