@@ -39,7 +39,7 @@ func listAll(ctx context.Context, client proto.StudentsServiceClient) {
 	log.Println("password")
 	log.Println("password")
 	log.Println("password")
-	log.Println("password")
+	log.Println("password2")
 	data, err := json.MarshalIndent(students.GetStudents(), "", " ")
 	log.Println(string(data), err)
 }
