@@ -17,6 +17,11 @@ func FetchAll(ctx context.Context) ([]domain.Student, error) {
 	return fakeStudents(), nil
 }
 
+
+func FetchAll2(ctx context.Context) ([]domain.Student, error) {
+	return fakeStudents(), nil
+}
+
 func FetchById(ctx context.Context, id int) (*domain.Student, error) {
 	//r := Repository{db: core.DB}
 
